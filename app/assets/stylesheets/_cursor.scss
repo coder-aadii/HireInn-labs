@@ -1,0 +1,85 @@
+/* =========================================
+   HIDE NATIVE CURSOR (GLOBAL)
+========================================= */
+.public-cursor.cursor-active,
+.public-cursor.cursor-active * {
+  cursor: none !important;
+}
+
+/* =========================================
+   ROOT CONTAINER
+========================================= */
+#cursor-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+/* =========================================
+   CURSOR + TRAIL BASE
+========================================= */
+.cursor-logo,
+.cursor-trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+/* =========================================
+   MAIN CURSOR
+========================================= */
+.cursor-logo {
+  z-index: 2002;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.cursor-logo.is-visible {
+  opacity: 0.95;
+}
+
+.cursor-logo.is-hidden {
+  opacity: 0;
+}
+
+/* =========================================
+   TRAIL EFFECT
+========================================= */
+.cursor-trail {
+  z-index: 2001;
+  opacity: 0.8;
+  animation: cursor-trail-fade 700ms ease-out forwards;
+}
+
+/* IMPORTANT: preserve position + animate scale */
+@keyframes cursor-trail-fade {
+  0% {
+    opacity: 0.8;
+    transform: translate3d(var(--x), var(--y), 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--x), var(--y), 0) scale(0.4);
+  }
+}
+
+/* =========================================
+   TOUCH DEVICES (DISABLE COMPLETELY)
+========================================= */
+@media (hover: none), (pointer: coarse) {
+  .public-cursor.cursor-active,
+  .public-cursor.cursor-active * {
+    cursor: auto !important;
+  }
+
+  #cursor-root {
+    display: none;
+  }
+}

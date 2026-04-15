@@ -19,7 +19,7 @@
       </div>
       <div class="dashboard-metric">
         <div class="dashboard-metric__label">Candidates</div>
-        <div class="dashboard-metric__value">0</div>
+        <div class="dashboard-metric__value"><%= @jobs.sum { |job| job.applications.count + job.job_resumes.count } %></div>
         <div class="dashboard-metric__hint">Total applicants</div>
       </div>
       <div class="dashboard-metric">

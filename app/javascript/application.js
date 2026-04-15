@@ -1,5 +1,6 @@
 import "@hotwired/turbo-rails"
 import "controllers"
+import { initializePublicCursor, teardownPublicCursor } from "cursor"
 
 document.addEventListener("submit", (event) => {
   const form = event.target
@@ -28,6 +29,8 @@ document.addEventListener("turbo:submit-end", (event) => {
 })
 
 document.addEventListener("turbo:load", () => {
+  initializePublicCursor()
+
   const reveals = document.querySelectorAll(".reveal")
   if (!reveals.length) return
 
@@ -43,6 +46,10 @@ document.addEventListener("turbo:load", () => {
   )
 
   reveals.forEach((el) => observer.observe(el))
+})
+
+document.addEventListener("turbo:before-cache", () => {
+  teardownPublicCursor()
 })
 
 const getDialogBackdrop = () => document.querySelector(".dialog-backdrop")

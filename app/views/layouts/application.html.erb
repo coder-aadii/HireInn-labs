@@ -23,7 +23,10 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="<%= [content_for?(:body_class) ? content_for(:body_class) : nil, (user_signed_in? ? "app-shell" : nil)].compact.join(" ") %>">
+  <% body_class = content_for?(:body_class) ? content_for(:body_class) : nil %>
+  <% public_cursor = body_class.to_s.include?("landing-page") ? "public-cursor" : nil %>
+  <body class="<%= [body_class, public_cursor, (user_signed_in? ? "app-shell" : nil)].compact.join(" ") %>">
+    <div id="cursor-root" aria-hidden="true" data-cursor-image="<%= image_path("hireinn_logo.png") %>"></div>
     <div id="flash">
       <%= render "shared/flash" %>
     </div>
