@@ -7,6 +7,7 @@ class Job < ApplicationRecord
 
   validates :title, presence: true
   validates :slug, uniqueness: true
+  validates :experience_min, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   before_validation :generate_slug, on: :create
 
@@ -15,6 +16,22 @@ class Job < ApplicationRecord
 
   def to_param
     slug
+  end
+
+  def minimum_experience_label
+    value = experience_min
+    return "Not specified" if value.blank?
+
+    decimal_value = value.to_d
+    return "Fresher / 0 years" if decimal_value.zero?
+
+    if decimal_value < 1
+      months = (decimal_value * 12).round
+      return "#{months} months" if months.positive?
+    end
+
+    normalized = decimal_value.frac.zero? ? decimal_value.to_i.to_s : format("%<value>.1f", value: decimal_value.to_f)
+    "#{normalized}+ years"
   end
 
   private

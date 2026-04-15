@@ -28,6 +28,7 @@ class ApplicationsController < ApplicationController
     @application.resume.attach(payload[:resume]) if payload[:resume].present?
 
     if candidate.save && @application.save
+      CareerApplicationMailer.new_application(@application).deliver_later
       redirect_to career_path(@job), notice: "Application submitted successfully."
     else
       flash.now[:alert] = "Please complete all required fields and attach your resume."

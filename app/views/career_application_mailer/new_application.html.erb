@@ -1,0 +1,121 @@
+<% resume_blob = @application.resume.blob if @application.resume.attached? %>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:
+  radial-gradient(circle at top, #2d2207 0%, #070707 55%);
+  background-color:#070707; margin:0; padding:24px 0; width:100%; font-family:Arial, Helvetica, sans-serif; color:#f5efe2;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:720px; width:100%; margin:0 auto; padding:0 16px;">
+        <tr>
+          <td style="padding-bottom:16px; text-align:center;">
+            <div style="display:inline-block; padding:10px 18px; border:1px solid rgba(212, 175, 55, 0.28); border-radius:999px; color:#d7b25c; font-size:12px; letter-spacing:2px; text-transform:uppercase; background-color:rgba(18, 18, 18, 0.78);">
+              HireInn Labs
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:linear-gradient(180deg, #151515 0%, #0b0b0b 100%); border:1px solid #3e3112; border-radius:28px; overflow:hidden; box-shadow:0 28px 80px rgba(0, 0, 0, 0.45);">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="padding:32px 32px 20px; background:
+                  linear-gradient(135deg, rgba(212, 175, 55, 0.20), rgba(0, 0, 0, 0) 58%),
+                  linear-gradient(180deg, #1a1a1a 0%, #101010 100%);
+                  border-bottom:1px solid rgba(212, 175, 55, 0.18);">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td style="vertical-align:top; padding-right:16px;">
+                        <p style="margin:0 0 10px; color:#d7b25c; font-size:12px; line-height:18px; letter-spacing:2px; text-transform:uppercase;">
+                          Application received
+                        </p>
+                        <h1 style="margin:0 0 12px; font-size:32px; line-height:1.2; color:#fff8e7;">
+                          Your application has been received
+                        </h1>
+                        <p style="margin:0; font-size:16px; line-height:1.7; color:#d7cfbf;">
+                          Hi <strong style="color:#fff8e7;"><%= @candidate.name %></strong>, thanks for applying for
+                          <strong style="color:#fff8e7;"><%= @job.title %></strong>. We’ve received your application and our team will review it shortly.
+                        </p>
+                      </td>
+                      <% if attachments["hireinn_logo.png"].present? %>
+                        <td width="96" style="width:96px; vertical-align:top; text-align:right;">
+                          <div style="display:inline-block; padding:10px; border-radius:18px; background:rgba(255, 255, 255, 0.03); border:1px solid rgba(212, 175, 55, 0.12);">
+                            <img src="<%= attachments["hireinn_logo.png"].url %>" alt="HireInn Labs" style="display:block; width:72px; max-width:72px; height:auto; margin:0;">
+                          </div>
+                        </td>
+                      <% end %>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:28px 32px 12px;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:separate; border-spacing:0 12px;">
+                    <tr>
+                      <td style="width:50%; padding-right:6px; vertical-align:top;">
+                        <div style="background:#111111; border:1px solid #2b2b2b; border-left:3px solid #d4af37; border-radius:18px; padding:18px;">
+                          <p style="margin:0 0 6px; color:#d7b25c; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;">Applicant</p>
+                          <p style="margin:0 0 10px; font-size:22px; line-height:1.3; color:#fff8e7;"><%= @candidate.name %></p>
+                          <p style="margin:0 0 8px; font-size:14px; line-height:1.6; color:#e8dfd0;">Email: <span style="color:#ffffff;"><%= @candidate.email %></span></p>
+                          <p style="margin:0; font-size:14px; line-height:1.6; color:#e8dfd0;">Phone: <span style="color:#ffffff;"><%= @candidate.phone.presence || "Not provided" %></span></p>
+                        </div>
+                      </td>
+                      <td style="width:50%; padding-left:6px; vertical-align:top;">
+                        <div style="background:#111111; border:1px solid #2b2b2b; border-left:3px solid #d4af37; border-radius:18px; padding:18px;">
+                          <p style="margin:0 0 6px; color:#d7b25c; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;">Role</p>
+                          <p style="margin:0 0 10px; font-size:22px; line-height:1.3; color:#fff8e7;"><%= @job.title %></p>
+                          <p style="margin:0 0 8px; font-size:14px; line-height:1.6; color:#e8dfd0;">Company: <span style="color:#ffffff;"><%= @job.company_name.presence || "HireInn Labs" %></span></p>
+                          <p style="margin:0; font-size:14px; line-height:1.6; color:#e8dfd0;">
+                            Details:
+                            <span style="color:#ffffff;"><%= [@job.location.presence, @job.employment_type.presence].compact.presence&.join(" · ") || "Not specified" %></span>
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:4px 32px 12px;">
+                  <div style="background:linear-gradient(180deg, rgba(212, 175, 55, 0.12), rgba(212, 175, 55, 0.03)); border:1px solid rgba(212, 175, 55, 0.22); border-radius:20px; padding:20px;">
+                    <p style="margin:0 0 14px; color:#d7b25c; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;">Submission Details</p>
+                    <p style="margin:0 0 8px; font-size:14px; line-height:1.7; color:#f2ebdc;">Status: <strong style="color:#ffffff;">Received</strong></p>
+                    <p style="margin:0 0 8px; font-size:14px; line-height:1.7; color:#f2ebdc;">Applied At: <strong style="color:#ffffff;"><%= @application.created_at.strftime("%d %b %Y, %I:%M %p") %></strong></p>
+                    <p style="margin:0 0 8px; font-size:14px; line-height:1.7; color:#f2ebdc;">Resume: <strong style="color:#ffffff;"><%= resume_blob&.filename&.to_s || "Not attached" %></strong></p>
+                    <% if resume_blob.present? %>
+                      <p style="margin:0; font-size:14px; line-height:1.7; color:#f2ebdc;">Resume Size: <strong style="color:#ffffff;"><%= number_to_human_size(resume_blob.byte_size) %></strong></p>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:4px 32px 12px;">
+                  <div style="background:#0f0f0f; border:1px solid #2a2a2a; border-radius:20px; padding:22px;">
+                    <p style="margin:0 0 14px; color:#d7b25c; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;">What Happens Next</p>
+                    <div style="font-size:15px; line-height:1.8; color:#f5efe2;">
+                      <p style="margin:0 0 10px; color:#d7cfbf;">Our hiring team will review your profile and resume against the role requirements.</p>
+                      <p style="margin:0; color:#d7cfbf;">If your profile is shortlisted, we’ll contact you using the email address or phone number you submitted.</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:12px 32px 32px;">
+                  <a href="<%= career_url(@job) %>" style="display:inline-block; padding:14px 22px; border-radius:999px; background:linear-gradient(135deg, #e7c56a, #b7891f); color:#141414; font-size:14px; font-weight:700; letter-spacing:0.3px; text-decoration:none;">
+                    View Job Posting
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:18px 12px 0; text-align:center; color:#978a6e; font-size:12px; line-height:1.6;">
+            This is an automated confirmation from HireInn Labs that your application was submitted successfully.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

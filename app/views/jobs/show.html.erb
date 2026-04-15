@@ -12,6 +12,15 @@
         </p>
       </div>
       <div class="job-show-actions">
+        <% if @job.published? %>
+          <button type="button" class="btn btn--outline btn--published" disabled aria-disabled="true">
+            Published
+          </button>
+        <% else %>
+          <button type="button" class="btn btn--primary" data-ui-toggle="dialog" data-ui-target="#publishJobDialog">
+            Publish
+          </button>
+        <% end %>
         <%= link_to "Edit", edit_job_path(@job), class: "btn btn--outline" %>
         <%= link_to "Delete", job_path(@job), data: { turbo_method: :delete, turbo_confirm: "Delete this job?" }, class: "btn btn--danger" %>
       </div>
@@ -86,7 +95,7 @@
               </div>
               <div class="job-show-stat">
                 <span>Experience</span>
-                <span><%= @job.experience_min.present? ? "#{@job.experience_min}+ yrs" : "-" %></span>
+                <span><%= @job.minimum_experience_label %></span>
               </div>
               <div class="job-show-stat">
                 <span>Expires</span>
@@ -205,6 +214,48 @@
     </div>
   </div>
 </div>
+
+<% unless @job.published? %>
+  <div class="dialog publish-job-dialog" id="publishJobDialog" aria-hidden="true">
+    <div class="dialog__content publish-job-dialog__content">
+      <div class="dialog__header publish-job-dialog__header">
+        <div>
+          <h4 class="dialog__title">Publish This Job?</h4>
+          <p class="job-show-muted publish-job-dialog__subtitle">
+            This will make <strong><%= @job.title %></strong> visible on the public careers page for candidates to discover and apply.
+          </p>
+        </div>
+        <button type="button" class="dialog__close" data-ui-dismiss="dialog" aria-label="Close"></button>
+      </div>
+
+      <div class="dialog__body publish-job-dialog__body">
+        <div class="publish-job-dialog__highlights">
+          <div class="publish-job-dialog__item">
+            <span class="publish-job-dialog__label">Role</span>
+            <span><%= @job.title %></span>
+          </div>
+          <div class="publish-job-dialog__item">
+            <span class="publish-job-dialog__label">Company</span>
+            <span><%= @job.company_name.presence || "Confidential" %></span>
+          </div>
+          <div class="publish-job-dialog__item">
+            <span class="publish-job-dialog__label">Location</span>
+            <span><%= @job.location.presence || "Remote" %></span>
+          </div>
+          <div class="publish-job-dialog__item">
+            <span class="publish-job-dialog__label">Status Change</span>
+            <span>Draft to Published</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog__footer publish-job-dialog__footer">
+        <button type="button" class="btn btn--outline" data-ui-dismiss="dialog">Cancel</button>
+        <%= button_to "Confirm Publish", publish_job_path(@job), method: :patch, class: "btn btn--primary", form_class: "publish-job-dialog__form" %>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <% @resumes&.each do |resume| %>
   <% analysis = resume.analysis_json || {} %>

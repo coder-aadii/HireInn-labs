@@ -82,6 +82,11 @@ small {
 }
 
 ::selection {
-  background: var(--gold-tint);
-  color: var(--text-1);
+  background: rgba(212, 175, 55, 0.25);
+  color: #ffffff;
+}
+
+.landing ::selection {
+  background: rgba(0, 0, 0, 0.15);
+  color: #111111;
 }

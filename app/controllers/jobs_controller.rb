@@ -1,6 +1,6 @@
 class JobsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_job, only: %i[show edit update destroy]
+  before_action :set_job, only: %i[show edit update destroy publish]
 
   def index
     @query = params[:q]
@@ -64,6 +64,22 @@ class JobsController < ApplicationController
   def destroy
     @job.destroy
     redirect_to jobs_path, notice: "Job deleted."
+  end
+
+  def publish
+    if @job.published?
+      redirect_to @job, notice: "Job is already published on the careers page."
+      return
+    end
+
+    @job.status = :published
+    apply_publish_timestamp!
+
+    if @job.save
+      redirect_to @job, notice: "Job published successfully. It is now live on the careers page."
+    else
+      redirect_to @job, alert: @job.errors.full_messages.to_sentence.presence || "Unable to publish job."
+    end
   end
 
   private

@@ -110,6 +110,12 @@ document.addEventListener("keydown", (event) => {
 })
 
 document.addEventListener("click", (event) => {
+  const dateInput = event.target.closest("input[type='date'][data-open-picker='true']")
+  if (dateInput && typeof dateInput.showPicker === "function") {
+    dateInput.showPicker()
+    return
+  }
+
   const tabTrigger = event.target.closest("[data-ui-tab-target]")
   if (!tabTrigger) return
   event.preventDefault()

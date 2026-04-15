@@ -43,7 +43,7 @@
 
   <div class="job-entry-form__field">
     <%= form.label :experience_min, "Experience Min (years)", class: "job-entry-form__label" %>
-    <%= form.number_field :experience_min, class: "job-entry-form__input", min: 0 %>
+    <%= form.number_field :experience_min, class: "job-entry-form__input", min: 0, step: 0.1, placeholder: "0 for freshers, 0.5 for 6 months" %>
   </div>
 
   <div class="job-entry-form__field job-entry-form__field--third">
@@ -85,7 +85,7 @@
   </div>
   <div class="job-entry-form__field">
     <%= form.label :expires_at, class: "job-entry-form__label" %>
-    <%= form.date_field :expires_at, class: "job-entry-form__input" %>
+    <%= form.date_field :expires_at, class: "job-entry-form__input", data: { open_picker: true } %>
   </div>
 
   <div class="job-entry-form__footer">

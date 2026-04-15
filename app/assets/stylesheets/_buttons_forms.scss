@@ -57,13 +57,13 @@
 
 .btn--ghost {
   color: var(--text-2);
-  border-color: var(--border-subtle);
+  border-color: rgb(39, 30, 66);
   background: transparent;
 }
 
 .btn--ghost:hover {
-  border-color: var(--border-strong);
-  color: #d7e3fa;
+  border-color: rgba(26, 38, 141);
+  // color: #d7e3fa;
   background: rgba(255, 255, 255, 0.04);
   transform: translateY(-1px);
 }

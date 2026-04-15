@@ -24,6 +24,10 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
 
   resources "jobs" do
+    member do
+      patch :publish
+    end
+
     resources :resumes, controller: "job_resumes", only: [:create] do
       collection do
         post :match

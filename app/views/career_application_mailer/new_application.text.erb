@@ -1,0 +1,28 @@
+Your application has been received for <%= @job.title %>
+
+Hi <%= @candidate.name %>,
+
+Thank you for applying for <%= @job.title %>. We have received your application successfully.
+
+Applicant
+Name: <%= @candidate.name %>
+Email: <%= @candidate.email %>
+Phone: <%= @candidate.phone.presence || "Not provided" %>
+
+Role
+Title: <%= @job.title %>
+Company: <%= @job.company_name.presence || "HireInn Labs" %>
+Location: <%= @job.location.presence || "Not specified" %>
+Employment Type: <%= @job.employment_type.presence || "Not specified" %>
+
+Submission
+Status: Received
+Applied At: <%= @application.created_at.strftime("%d %b %Y, %I:%M %p") %>
+Resume: <%= @application.resume.attached? ? @application.resume.filename.to_s : "Not attached" %>
+
+What Happens Next
+Our hiring team will review your profile and resume.
+If your profile is shortlisted, we will contact you using the email or phone number you submitted.
+
+View Job Posting
+<%= career_url(@job) %>

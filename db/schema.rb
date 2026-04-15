@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_14_093000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_114000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -94,7 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_093000) do
     t.string "currency", default: "INR"
     t.text "description"
     t.string "employment_type"
-    t.integer "experience_min"
+    t.decimal "experience_min", precision: 4, scale: 1
     t.datetime "expires_at"
     t.string "location"
     t.datetime "published_at"
