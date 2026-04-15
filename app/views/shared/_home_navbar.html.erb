@@ -1,0 +1,27 @@
+<nav class="landing-nav">
+  <div class="page-container landing-nav__inner">
+    <div class="landing-nav__brand">
+      <%= image_tag "hireinn_logo.png", alt: "HireInn Labs logo", class: "landing-nav__logo" %>
+      <%= link_to "HireInn Labs", home_index_path %>
+    </div>
+    <div class="landing-nav__links">
+      <%= link_to "Home", home_index_path %>
+      <a href="#">Blog</a>
+      <a href="#">About</a>
+      <%= link_to "Careers", careers_path %>
+      <a href="#">Contact</a>
+      <a href="#">AI Hiring Manager</a>
+      <a href="#">Candidate Screening</a>
+      <a href="#">Guide</a>
+    </div>
+    <div class="landing-nav__actions">
+      <% if user_signed_in? %>
+        <%= link_to "Dashboard", dashboard_path, class: "btn btn--ghost" %>
+        <%= button_to "Log out", destroy_user_session_path, method: :delete, form_class: "nav-inline-form", class: "btn btn--primary" %>
+      <% else %>
+        <%= link_to "Log in", new_user_session_path, class: "btn btn--ghost" %>
+        <%= link_to "Join", new_user_registration_path, class: "btn btn--primary" %>
+      <% end %>
+    </div>
+  </div>
+</nav>

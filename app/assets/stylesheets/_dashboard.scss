@@ -1,0 +1,228 @@
+body.app-shell {
+  background: #0c111a;
+}
+
+.dashboard-page {
+  padding-top: var(--nav-offset);
+}
+
+.dashboard-page__container {
+  padding: var(--space-6) 0;
+}
+
+.dashboard-header {
+  margin-bottom: var(--space-6);
+}
+
+.dashboard-header__title {
+  margin: 0 0 0.4rem;
+}
+
+.dashboard-header__subtitle {
+  margin: 0;
+  color: var(--text-3);
+}
+
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.dashboard-metric {
+  background: rgba(14, 19, 28, 0.75);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.dashboard-metric__label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+}
+
+.dashboard-metric__value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.35rem 0;
+  color: var(--text-1);
+}
+
+.dashboard-metric__hint {
+  color: var(--text-3);
+  font-size: 0.85rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);
+  gap: var(--space-5);
+}
+
+.dashboard-card {
+  padding: var(--space-4);
+}
+
+.dashboard-card--wide {
+  grid-column: 1 / 2;
+}
+
+.dashboard-card--full {
+  grid-column: 1 / -1;
+}
+
+.dashboard-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-card__meta {
+  color: var(--text-3);
+  font-size: 0.85rem;
+}
+
+.dashboard-actions {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.dashboard-chart {
+  min-height: 240px;
+  padding: var(--space-4);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 28%),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+}
+
+.dashboard-chart__legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-2);
+  font-size: 0.88rem;
+}
+
+.dashboard-chart__legend-item strong {
+  color: var(--text-1);
+}
+
+.dashboard-chart__legend-item--muted {
+  color: var(--text-3);
+}
+
+.dashboard-chart__legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.dashboard-chart__legend-swatch--applications {
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12);
+}
+
+.dashboard-chart__legend-swatch--jobs {
+  background: var(--success);
+  box-shadow: 0 0 0 4px rgba(122, 217, 168, 0.12);
+}
+
+.dashboard-chart__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.dashboard-chart__axis,
+.dashboard-chart__grid {
+  fill: none;
+  stroke-width: 1;
+}
+
+.dashboard-chart__axis {
+  stroke: rgba(255, 255, 255, 0.16);
+}
+
+.dashboard-chart__grid {
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-dasharray: 4 8;
+}
+
+.dashboard-chart__bar {
+  fill: rgba(122, 217, 168, 0.78);
+}
+
+.dashboard-chart__line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 14px rgba(212, 175, 55, 0.18));
+}
+
+.dashboard-chart__dot {
+  fill: var(--gold);
+  stroke: rgba(11, 15, 20, 0.8);
+  stroke-width: 2;
+}
+
+.dashboard-chart__label {
+  fill: var(--text-3);
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.dashboard-chart__empty {
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.dashboard-chart__empty strong {
+  color: var(--text-1);
+}
+
+.dashboard-table {
+  overflow-x: auto;
+}
+
+.dashboard-table__muted {
+  color: var(--text-3);
+}
+
+.dashboard-empty {
+  margin: 0;
+  color: var(--text-3);
+}
+
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-chart {
+    padding: var(--space-3);
+  }
+}

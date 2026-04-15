@@ -1,0 +1,50 @@
+<% content_for :body_class, "landing-page" %>
+
+<%= render "shared/home_navbar" %>
+
+<main class="landing careers-page">
+  <section class="careers-hero">
+    <div class="page-container careers-hero__inner">
+      <h2>
+        Join Our Teams
+        <span class="careers-hero__accent">Open Roles</span>
+      </h2>
+      <p>
+        Explore published opportunities and apply in minutes.
+      </p>
+    </div>
+  </section>
+
+  <section class="careers-list">
+    <div class="page-container">
+      <% if @jobs.any? %>
+        <div class="careers-grid">
+          <% @jobs.each do |job| %>
+            <div class="panel panel--glass careers-card">
+              <div class="careers-card__header">
+                <div>
+                  <h3 class="careers-card__title"><%= job.title %></h3>
+                  <div class="careers-card__meta">
+                    <%= [job.company_name.presence, job.location.presence].compact.join(" · ") %>
+                  </div>
+                </div>
+                <span class="tag tag--dark"><%= job.employment_type.presence || "Role" %></span>
+              </div>
+              <p class="careers-card__desc">
+                <%= truncate(strip_tags(render_markdown(job.description)), length: 220) %>
+              </p>
+              <div class="careers-card__actions">
+                <%= link_to "View role", career_path(job), class: "btn btn--outline" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="panel panel--glass careers-empty">
+          <h3>No open roles yet</h3>
+          <p>Check back soon for new opportunities.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</main>

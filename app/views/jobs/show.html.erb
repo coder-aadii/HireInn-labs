@@ -1,0 +1,250 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="job-show-page page-shell">
+  <div class="page-container job-show-page__container">
+    <header class="job-show-header">
+      <div>
+        <h1 class="job-show-header__title"><%= @job.title %></h1>
+        <p class="job-show-header__meta">
+          <%= @job.company_name.presence || "Confidential" %> ·
+          <%= @job.location.presence || "Remote" %> ·
+          <%= @job.employment_type.presence || "Full-time" %>
+        </p>
+      </div>
+      <div class="job-show-actions">
+        <%= link_to "Edit", edit_job_path(@job), class: "btn btn--outline" %>
+        <%= link_to "Delete", job_path(@job), data: { turbo_method: :delete, turbo_confirm: "Delete this job?" }, class: "btn btn--danger" %>
+      </div>
+    </header>
+
+    <% resume_tab_active = params[:tab] == "resume" %>
+    <div class="tabs" data-ui-tabs>
+      <button class="tab <%= resume_tab_active ? "" : "is-active" %>" data-ui-tab-target="#job-overview">Overview</button>
+      <button class="tab <%= resume_tab_active ? "is-active" : "" %>" data-ui-tab-target="#job-resume">Resume Parser</button>
+    </div>
+
+    <div class="tab-panels">
+      <section class="tab-panel <%= resume_tab_active ? "" : "is-active" %>" id="job-overview">
+        <div class="job-show-grid">
+          <div class="job-show-main">
+            <div class="panel panel--glass job-show-card">
+              <div class="job-show-card__header">
+                <h3>Overview</h3>
+                <div class="job-show-card__badges">
+                  <% if @job.ai_generated? %>
+                  <span class="tag tag--gold">AI</span>
+                  <% end %>
+                  <span class="status-badge status-<%= @job.status %>"><%= @job.status.titleize %></span>
+                </div>
+              </div>
+
+              <div class="job-markdown">
+                <%= render_job_markdown(@job.description) %>
+                <% if @job.description.blank? %>
+                  <p class="job-show-muted">No description yet.</p>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="panel panel--glass job-show-card">
+              <h3>Responsibilities</h3>
+              <div class="job-markdown">
+                <%= render_job_markdown(@job.responsibilities) %>
+                <% if @job.responsibilities.blank? %>
+                  <p class="job-show-muted">No responsibilities listed.</p>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="panel panel--glass job-show-card">
+              <h3>Requirements</h3>
+              <div class="job-markdown">
+                <%= render_job_markdown(@job.requirements) %>
+                <% if @job.requirements.blank? %>
+                  <p class="job-show-muted">No requirements listed.</p>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="panel panel--glass job-show-card">
+              <h3>Benefits</h3>
+              <div class="job-markdown">
+                <%= render_job_markdown(@job.benefits) %>
+                <% if @job.benefits.blank? %>
+                  <p class="job-show-muted">No benefits listed.</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <aside class="job-show-sidebar">
+            <div class="panel panel--glass job-show-card">
+              <h6 class="job-show-card__eyebrow">Quick Stats</h6>
+              <div class="job-show-stat">
+                <span>Salary</span>
+                <span><%= @job.salary_min || 0 %> - <%= @job.salary_max || 0 %> <%= @job.currency %></span>
+              </div>
+              <div class="job-show-stat">
+                <span>Experience</span>
+                <span><%= @job.experience_min.present? ? "#{@job.experience_min}+ yrs" : "-" %></span>
+              </div>
+              <div class="job-show-stat">
+                <span>Expires</span>
+                <span><%= @job.expires_at&.to_date || "-" %></span>
+              </div>
+            </div>
+
+            <div class="panel panel--glass job-show-card">
+              <h6 class="job-show-card__eyebrow">Skills</h6>
+              <div class="skills-list">
+                <% Array(@job.skills_required).each do |skill| %>
+                  <span class="skill-chip"><%= skill %></span>
+                <% end %>
+                <% if @job.skills_required.blank? %>
+                  <span class="job-show-muted">Add skills for this role.</span>
+                <% end %>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tab-panel <%= resume_tab_active ? "is-active" : "" %>" id="job-resume">
+        <div class="panel panel--glass job-show-card" id="resume-parser">
+          <div class="job-show-card__header">
+            <div>
+              <h3>Resume Parser</h3>
+              <p class="job-show-muted">Upload up to 5 resumes (PDF/DOC/DOCX). Parsed data stays private to HR.</p>
+            </div>
+          </div>
+
+          <%= form_with url: job_resumes_path(@job), scope: :job_resume, html: { multipart: true }, class: "resume-upload" do |form| %>
+            <div class="resume-upload__field">
+              <%= form.file_field :files, class: "input", multiple: true, accept: ".pdf,.doc,.docx", required: true %>
+              <small class="job-show-muted">Max 5 files per upload.</small>
+            </div>
+            <div class="resume-upload__actions">
+              <%= form.submit "Upload & Parse", class: "btn btn--primary" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="panel panel--glass job-show-card">
+          <div class="job-show-card__header">
+            <div>
+              <h3>Parsed Resumes</h3>
+              <p class="job-show-muted">Select resumes to run AI matching and view analysis.</p>
+            </div>
+          </div>
+
+          <% if @resumes&.any? %>
+            <%= form_with url: match_job_resumes_path(@job), method: :post, class: "resume-match-form" do |form| %>
+              <div class="resume-match-actions">
+                <label class="checkbox">
+                  <%= check_box_tag :match_all, "1", false, class: "checkbox__input" %>
+                  <span class="checkbox__label">Match all</span>
+                </label>
+                <%= form.submit "Run AI Match", class: "btn btn--primary btn--small" %>
+              </div>
+
+              <div class="job-show-table">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Candidate</th>
+                      <th>Skills</th>
+                      <th>Match</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @resumes.each do |resume| %>
+                      <% analysis = resume.analysis_json || {} %>
+                      <% match_score = resume.match_score || analysis["match_percentage"] %>
+                      <tr>
+                        <td>
+                          <label class="table-check">
+                            <%= check_box_tag "resume_ids[]", resume.id, false, class: "table-check__input" %>
+                          </label>
+                        </td>
+                        <td>
+                          <div><strong><%= resume.name.presence || "Candidate" %></strong></div>
+                          <div class="job-show-muted"><%= resume.created_at.to_date %></div>
+                          <div class="job-show-muted"><%= resume.email.presence || "—" %></div>
+                          <div class="job-show-muted"><%= resume.phone.presence || "—" %></div>
+                        </td>
+                        <td class="job-show-muted">
+                          <%= Array(resume.skills).first(6).join(", ").presence || "—" %>
+                        </td>
+                        <td>
+                          <% if match_score.present? %>
+                            <span class="tag tag--gold"><%= match_score %>%</span>
+                          <% elsif analysis["error"].present? %>
+                            <span class="tag tag--soft">Error</span>
+                          <% else %>
+                            <span class="job-show-muted">—</span>
+                          <% end %>
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn--primary btn--small" data-ui-toggle="dialog" data-ui-target="#analysisDialog-<%= resume.id %>">
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="job-show-muted">No resumes uploaded yet.</p>
+          <% end %>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<% @resumes&.each do |resume| %>
+  <% analysis = resume.analysis_json || {} %>
+  <% match_score = resume.match_score || analysis["match_percentage"] %>
+  <div class="dialog match-details-dialog" id="analysisDialog-<%= resume.id %>" aria-hidden="true">
+    <div class="dialog__content match-details-surface">
+      <div class="dialog__header match-details-header">
+        <div>
+          <h4 class="dialog__title">Match Details: <%= resume.name.presence || "Candidate" %></h4>
+          <div class="match-details-meta">
+            <span class="match-score"><%= match_score.present? ? "#{match_score}%" : "—" %></span>
+            <span class="match-fit">Experience Fit: <%= analysis["experience_fit"].presence || "—" %></span>
+          </div>
+        </div>
+        <button type="button" class="dialog__close match-details-close" data-ui-dismiss="dialog" aria-label="Close"></button>
+      </div>
+      <div class="dialog__body match-details-body">
+        <% if analysis["error"].present? %>
+          <div class="match-section">
+            <h6>Analysis Error</h6>
+            <p><%= analysis["error"] %></p>
+          </div>
+        <% else %>
+          <div class="match-section">
+            <h6>Matched Skills</h6>
+            <p><%= Array(analysis["matched_skills"]).presence&.join(", ") || "—" %></p>
+          </div>
+          <div class="match-section">
+            <h6>Missing Skills</h6>
+            <p><%= Array(analysis["missing_skills"]).presence&.join(", ") || "—" %></p>
+          </div>
+          <div class="match-section">
+            <h6>Summary</h6>
+            <p><%= analysis["summary"].presence || "—" %></p>
+          </div>
+        <% end %>
+      </div>
+      <div class="dialog__footer match-details-footer">
+        <button type="button" class="btn btn--outline" data-ui-dismiss="dialog">Close</button>
+      </div>
+    </div>
+  </div>
+<% end %>

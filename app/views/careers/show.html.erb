@@ -1,0 +1,76 @@
+<% content_for :body_class, "landing-page" %>
+
+<%= render "shared/home_navbar" %>
+
+<main class="landing careers-page">
+  <section class="careers-detail">
+    <div class="page-container">
+      <div class="panel panel--glass careers-detail__card">
+        <div class="careers-detail__header">
+          <div>
+            <h1 class="careers-detail__title"><%= @job.title %></h1>
+            <div class="careers-detail__meta">
+              <%= [@job.company_name.presence, @job.location.presence, @job.employment_type.presence].compact.join(" · ") %>
+            </div>
+          </div>
+          <div class="careers-detail__actions">
+            <%= link_to "Apply", "#apply", class: "btn btn--primary" %>
+          </div>
+        </div>
+
+        <div class="careers-detail__section">
+          <%= render_markdown(@job.description) %>
+        </div>
+
+        <% if @job.requirements.present? %>
+          <div class="careers-detail__section">
+            <h3>Requirements</h3>
+            <%= render_markdown(@job.requirements) %>
+          </div>
+        <% end %>
+
+        <% if @job.benefits.present? %>
+          <div class="careers-detail__section">
+            <h3>Benefits</h3>
+            <%= render_markdown(@job.benefits) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <section id="apply" class="careers-apply">
+    <div class="page-container">
+      <div class="panel panel--glass careers-apply__card">
+        <h3>Apply for this role</h3>
+        <p class="careers-apply__intro">Share your details and attach your resume.</p>
+
+        <%= form_with url: career_applications_path(@job), scope: :application, html: { multipart: true }, class: "careers-apply__form" do |form| %>
+          <div class="careers-apply__field">
+            <%= form.label :name, class: "label" %>
+            <%= form.text_field :name, class: "input" %>
+          </div>
+          <div class="careers-apply__field">
+            <%= form.label :email, class: "label" %>
+            <%= form.email_field :email, class: "input" %>
+          </div>
+          <div class="careers-apply__field">
+            <%= form.label :phone, class: "label" %>
+            <%= form.telephone_field :phone, class: "input" %>
+          </div>
+          <div class="careers-apply__field">
+            <%= form.label :resume, class: "label" %>
+            <%= form.file_field :resume, class: "input" %>
+          </div>
+          <div class="careers-apply__field careers-apply__field--full">
+            <%= form.label :cover_letter, class: "label" %>
+            <%= form.text_area :cover_letter, class: "textarea" %>
+          </div>
+          <div class="careers-apply__actions">
+            <%= form.submit "Submit Application", class: "btn btn--primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</main>

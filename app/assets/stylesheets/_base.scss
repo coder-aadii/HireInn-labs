@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0c111a;
+}
+
+.app-shell {
+  font-family: "Manrope", sans-serif;
+}
+
+a {
+  color: var(--text-1);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--text-2);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--text-1);
+  line-height: 1.2;
+  margin: 0 0 var(--space-3);
+}
+
+h1 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+h5 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+
+p {
+  margin: 0 0 var(--space-3);
+  color: var(--text-2);
+}
+
+small {
+  color: var(--text-3);
+}
+
+::selection {
+  background: var(--gold-tint);
+  color: var(--text-1);
+}

@@ -1,0 +1,128 @@
+.btn {
+  border-radius: var(--radius-md);
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn--small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn--large {
+  padding: 0.75rem 1.4rem;
+  font-size: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--gold), #b8962e);
+  color: #0c111a;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 26px rgba(212, 175, 55, 0.25);
+}
+
+.btn--primary:hover {
+  background: linear-gradient(135deg, var(--gold-strong), var(--gold));
+  color: #00215f;
+  box-shadow: 0 16px 34px rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn--outline {
+  color: var(--text-1);
+  border-color: var(--border-strong);
+  background: transparent;
+}
+
+.btn--outline:hover {
+  border-color: var(--gold-border);
+  color: var(--gold);
+  background: var(--gold-tint);
+}
+
+.btn--ghost {
+  color: var(--text-2);
+  border-color: var(--border-subtle);
+  background: transparent;
+}
+
+.btn--ghost:hover {
+  border-color: var(--border-strong);
+  color: #d7e3fa;
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+}
+
+.btn--danger {
+  color: var(--danger);
+  border-color: rgba(239, 122, 122, 0.5);
+  background: transparent;
+}
+
+.btn--danger:hover {
+  background: rgba(239, 122, 122, 0.12);
+}
+
+.label {
+  color: var(--text-2);
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  background: rgba(12, 16, 24, 0.8);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-1);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.95rem;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-3);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  background: rgba(12, 16, 24, 0.9);
+  border-color: var(--gold-border);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.18);
+  color: var(--text-1);
+  outline: none;
+}
+
+.input--large,
+.textarea--large {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: var(--radius-lg);
+}
+
+.textarea {
+  min-height: 110px;
+  resize: vertical;
+}

@@ -1,0 +1,87 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="jobs-page page-shell">
+  <div class="page-container jobs-page__container">
+    <header class="jobs-header">
+      <div>
+        <h1 class="jobs-header__title">Jobs</h1>
+        <p class="jobs-header__subtitle">Create, publish, and manage job listings.</p>
+      </div>
+      <div class="jobs-header__actions">
+        <%= link_to "Create Job", new_job_path, class: "btn btn--ghost", style: "width: 240px;" %>
+      </div>
+    </header>
+
+    <section class="panel panel--glass jobs-search">
+      <%= form_with url: jobs_path, method: :get, local: true, class: "jobs-search__form" do |form| %>
+        <div class="jobs-search__field">
+          <%= form.text_field :q,
+            value: @query,
+            class: "input input--large",
+            placeholder: "Search by job title" %>
+        </div>
+        <div class="jobs-search__actions">
+          <%= form.submit "Search", class: "btn btn--primary" %>
+          <%= link_to "Clear", jobs_path, class: "btn btn--ghost" %>
+        </div>
+      <% end %>
+    </section>
+
+    <% if @jobs.any? %>
+      <div class="jobs-grid">
+        <% @jobs.each do |job| %>
+          <div class="job-card panel panel--hover">
+            <div class="job-card__body">
+              <div class="job-card__header">
+                <div>
+                  <h3 class="job-card__title"><%= job.title %></h3>
+                  <div class="job-card__meta">
+                    <%= job.company_name.presence || "Confidential" %> ·
+                    <%= job.location.presence || "Remote" %> ·
+                    <%= job.employment_type.presence || "Full-time" %>
+                  </div>
+                </div>
+
+                <span class="status-badge status-<%= job.status %>">
+                  <%= job.status.titleize %>
+                </span>
+              </div>
+
+              <p class="job-card__desc">
+                <%= truncate(strip_tags(render_job_markdown(job.description)), length: 140) %>
+              </p>
+
+              <div class="job-card__skills">
+                <% Array(job.skills_required).first(4).each do |skill| %>
+                  <span class="skill-chip"><%= skill %></span>
+                <% end %>
+                <% if Array(job.skills_required).size > 4 %>
+                  <span class="skill-chip more">
+                    +<%= Array(job.skills_required).size - 4 %>
+                  </span>
+                <% end %>
+              </div>
+
+              <div class="job-card__footer">
+                <div class="job-card__salary">
+                  ₹ <%= job.salary_min || 0 %> — <%= job.salary_max || 0 %> <%= job.currency %>
+                </div>
+
+                <div class="job-card__actions">
+                  <%= link_to "View", job_path(job), class: "btn btn--outline btn--small" %>
+                  <%= link_to "Edit", edit_job_path(job), class: "btn btn--ghost btn--small" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="panel panel--glass jobs-empty">
+        <h3>No jobs yet</h3>
+        <p>Create your first job listing and start hiring.</p>
+        <%= link_to "Create Job", new_job_path, class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

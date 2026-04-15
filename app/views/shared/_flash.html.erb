@@ -1,0 +1,8 @@
+<% flash.each do |type, message| %>
+  <% next if message.blank? %>
+  <% level = type.to_s == "notice" ? "success" : "danger" %>
+  <div class="notice notice--<%= level %>" role="alert" data-ui-dismiss="true">
+    <%= message %>
+    <button type="button" class="notice__close" data-ui-dismiss="notice" aria-label="Close"></button>
+  </div>
+<% end %>

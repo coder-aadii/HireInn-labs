@@ -1,0 +1,50 @@
+:root {
+  --bg-0: #0b0f14;
+  --bg-1: #0d1219;
+  --bg-2: #0e141d;
+  --surface-1: #111723;
+  --surface-2: #0f141c;
+  --surface-3: #141b28;
+
+  --text-1: #e6eaf2;
+  --text-2: #c7cdd9;
+  --text-3: #9aa4b2;
+
+  --gold: #d4af37;
+  --gold-strong: #e3c055;
+  --gold-soft: rgba(212, 175, 55, 0.18);
+  --gold-tint: rgba(212, 175, 55, 0.08);
+  --gold-border: rgba(212, 175, 55, 0.4);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 14px 40px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 26px 70px rgba(0, 0, 0, 0.6);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --nav-offset: 4.25rem;
+
+  --success: #7ad9a8;
+  --warning: #e0bf63;
+  --danger: #ef7a7a;
+
+  --bs-body-bg: #0b0f14;
+  --bs-body-color: #e6eaf2;
+  --bs-border-color: rgba(255, 255, 255, 0.12);
+  --bs-body-color-rgb: 230, 234, 242;
+}

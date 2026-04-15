@@ -1,0 +1,94 @@
+<%= form_with model: job, class: "job-entry-form", data: { turbo: true } do |form| %>
+  <div id="ai_notice" class="job-entry-form__notice">
+    <%= render "ai_notice" %>
+  </div>
+  <% if job.ai_generated? %>
+    <%= form.hidden_field :ai_generated, value: true %>
+  <% end %>
+  <div class="job-form-header">
+    <div>
+      <h5>AI Job Description</h5>
+      <p>Provide basics and let AI generate the full description</p>
+    </div>
+
+    <div class="job-form-actions">
+      <%= form.submit "Generate with AI", name: "generate_ai", class: "btn btn--outline" %>
+      <%= form.submit "Save", class: "btn btn--primary", data: { turbo_frame: "_top" } %>
+    </div>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--full">
+    <%= form.label :title, class: "job-entry-form__label" %>
+    <%= form.text_field :title, class: "job-entry-form__input job-entry-form__input--large", placeholder: "Stock Market Analyst" %>
+  </div>
+
+  <div class="job-entry-form__field">
+    <%= form.label :company_name, "Company (optional)", class: "job-entry-form__label" %>
+    <%= form.text_field :company_name, class: "job-entry-form__input", placeholder: "NovaQuant Analytics" %>
+  </div>
+  <div class="job-entry-form__field">
+    <%= form.label :location, class: "job-entry-form__label" %>
+    <%= form.text_field :location, class: "job-entry-form__input", placeholder: "Indore / Remote" %>
+  </div>
+
+  <div class="job-entry-form__field">
+    <%= form.label :employment_type, class: "job-entry-form__label" %>
+    <%= form.text_field :employment_type, class: "job-entry-form__input", placeholder: "Full-time" %>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--full">
+    <%= form.label :description, class: "job-entry-form__label" %>
+    <%= form.text_area :description, rows: 6, class: "job-entry-form__textarea", placeholder: "Short overview of the role" %>
+  </div>
+
+  <div class="job-entry-form__field">
+    <%= form.label :experience_min, "Experience Min (years)", class: "job-entry-form__label" %>
+    <%= form.number_field :experience_min, class: "job-entry-form__input", min: 0 %>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--third">
+    <%= form.label :salary_min, "Salary Min", class: "job-entry-form__label" %>
+    <%= form.number_field :salary_min, class: "job-entry-form__input", min: 0 %>
+  </div>
+  <div class="job-entry-form__field job-entry-form__field--third">
+    <%= form.label :salary_max, "Salary Max", class: "job-entry-form__label" %>
+    <%= form.number_field :salary_max, class: "job-entry-form__input", min: 0 %>
+  </div>
+  <div class="job-entry-form__field job-entry-form__field--third">
+    <%= form.label :currency, class: "job-entry-form__label" %>
+    <%= form.text_field :currency, class: "job-entry-form__input", placeholder: "INR" %>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--full">
+    <%= form.label :skills_required, "Skills (comma separated) (optional)", class: "job-entry-form__label" %>
+    <%= form.text_field :skills_required, value: Array(job.skills_required).join(", "), class: "job-entry-form__input", placeholder: "Let AI handle this if you prefer" %>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--full">
+    <%= form.label :requirements, "Requirements (optional)", class: "job-entry-form__label" %>
+    <%= form.text_area :requirements, rows: 4, class: "job-entry-form__textarea", placeholder: "Let AI handle this if you prefer" %>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--full">
+    <%= form.label :responsibilities, "Responsibilities (optional)", class: "job-entry-form__label" %>
+    <%= form.text_area :responsibilities, rows: 4, class: "job-entry-form__textarea", placeholder: "Let AI handle this if you prefer" %>
+  </div>
+
+  <div class="job-entry-form__field job-entry-form__field--full">
+    <%= form.label :benefits, "Benefits (optional)", class: "job-entry-form__label" %>
+    <%= form.text_area :benefits, rows: 3, class: "job-entry-form__textarea", placeholder: "Let AI handle this if you prefer" %>
+  </div>
+
+  <div class="job-entry-form__field">
+    <%= form.label :status, class: "job-entry-form__label" %>
+    <%= form.select :status, Job.statuses.slice("draft", "published").keys.map { |s| [s.titleize, s] }, {}, class: "job-entry-form__select" %>
+  </div>
+  <div class="job-entry-form__field">
+    <%= form.label :expires_at, class: "job-entry-form__label" %>
+    <%= form.date_field :expires_at, class: "job-entry-form__input" %>
+  </div>
+
+  <div class="job-entry-form__footer">
+    <%= link_to "Cancel", jobs_path, class: "btn btn--ghost btn--large" %>
+  </div>
+<% end %>

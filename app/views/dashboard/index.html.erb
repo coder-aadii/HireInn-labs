@@ -1,0 +1,165 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="dashboard-page page-shell">
+  <div class="page-container dashboard-page__container">
+    <header class="dashboard-header">
+      <div>
+        <h1 class="dashboard-header__title">Dashboard</h1>
+        <p class="dashboard-header__subtitle">
+          Welcome back, <strong><%= current_user.email %></strong>
+        </p>
+      </div>
+    </header>
+
+    <section class="dashboard-metrics">
+      <div class="dashboard-metric">
+        <div class="dashboard-metric__label">Active Jobs</div>
+        <div class="dashboard-metric__value"><%= @jobs.published.count %></div>
+        <div class="dashboard-metric__hint">Live listings</div>
+      </div>
+      <div class="dashboard-metric">
+        <div class="dashboard-metric__label">Candidates</div>
+        <div class="dashboard-metric__value">0</div>
+        <div class="dashboard-metric__hint">Total applicants</div>
+      </div>
+      <div class="dashboard-metric">
+        <div class="dashboard-metric__label">AI Analyses</div>
+        <div class="dashboard-metric__value">0</div>
+        <div class="dashboard-metric__hint">Processed resumes</div>
+      </div>
+      <div class="dashboard-metric">
+        <div class="dashboard-metric__label">Interviews</div>
+        <div class="dashboard-metric__value">0</div>
+        <div class="dashboard-metric__hint">Scheduled</div>
+      </div>
+    </section>
+
+    <div class="dashboard-grid">
+      <section class="panel panel--glass dashboard-card dashboard-card--wide">
+        <div class="dashboard-card__header">
+          <h3>Hiring Activity</h3>
+          <span class="dashboard-card__meta">Last 30 days</span>
+        </div>
+        <div class="dashboard-card__body">
+          <% max_value = [@hiring_activity.map { |point| [point[:jobs], point[:applications]].max }.max.to_i, 1].max %>
+          <% chart_height = 220 %>
+          <% chart_width = 860.0 %>
+          <% baseline = 190.0 %>
+          <% usable_height = 130.0 %>
+          <% step_x = chart_width / [@hiring_activity.size - 1, 1].max %>
+          <% application_points = @hiring_activity.each_with_index.map do |point, index|
+               x = (index * step_x).round(2)
+               y = (baseline - (point[:applications].to_f / max_value) * usable_height).round(2)
+               "#{x},#{y}"
+             end.join(" ") %>
+
+          <div class="dashboard-chart">
+            <div class="dashboard-chart__legend">
+              <div class="dashboard-chart__legend-item">
+                <span class="dashboard-chart__legend-swatch dashboard-chart__legend-swatch--applications"></span>
+                <span>Applications: <strong><%= @hiring_activity_totals[:applications] %></strong></span>
+              </div>
+              <div class="dashboard-chart__legend-item">
+                <span class="dashboard-chart__legend-swatch dashboard-chart__legend-swatch--jobs"></span>
+                <span>Jobs posted: <strong><%= @hiring_activity_totals[:jobs] %></strong></span>
+              </div>
+              <% if @hiring_activity_totals[:peak_day].present? && (@hiring_activity_totals[:peak_day][:applications] + @hiring_activity_totals[:peak_day][:jobs]).positive? %>
+                <div class="dashboard-chart__legend-item dashboard-chart__legend-item--muted">
+                  Peak day: <strong><%= @hiring_activity_totals[:peak_day][:date].strftime("%b %-d") %></strong>
+                </div>
+              <% end %>
+            </div>
+
+            <% if @hiring_activity_totals[:applications].positive? || @hiring_activity_totals[:jobs].positive? %>
+              <svg viewBox="0 0 860 220" class="dashboard-chart__svg" aria-label="Hiring activity over the last 30 days">
+                <line x1="0" y1="<%= baseline %>" x2="860" y2="<%= baseline %>" class="dashboard-chart__axis" />
+                <line x1="0" y1="60" x2="860" y2="60" class="dashboard-chart__grid" />
+                <line x1="0" y1="125" x2="860" y2="125" class="dashboard-chart__grid" />
+
+                <% @hiring_activity.each_with_index do |point, index| %>
+                  <% x = (index * step_x).round(2) %>
+                  <% bar_height = ((point[:jobs].to_f / max_value) * usable_height).round(2) %>
+                  <% bar_y = (baseline - bar_height).round(2) %>
+                  <% if point[:jobs].positive? %>
+                    <rect
+                      x="<%= [x - 6, 0].max %>"
+                      y="<%= bar_y %>"
+                      width="12"
+                      height="<%= bar_height %>"
+                      rx="6"
+                      class="dashboard-chart__bar"
+                    />
+                  <% end %>
+
+                  <% if point[:applications].positive? %>
+                    <% dot_y = (baseline - (point[:applications].to_f / max_value) * usable_height).round(2) %>
+                    <circle cx="<%= x %>" cy="<%= dot_y %>" r="4.5" class="dashboard-chart__dot" />
+                  <% end %>
+                <% end %>
+
+                <polyline points="<%= application_points %>" class="dashboard-chart__line" />
+
+                <% [[0, @hiring_activity.first], [14, @hiring_activity[14]], [29, @hiring_activity.last]].each do |index, point| %>
+                  <% next unless point %>
+                  <% x = (index * step_x).round(2) %>
+                  <text x="<%= x %>" y="214" class="dashboard-chart__label"><%= point[:date].strftime("%b %-d") %></text>
+                <% end %>
+              </svg>
+            <% else %>
+              <div class="dashboard-chart__empty">
+                <strong>No activity yet.</strong>
+                Create a job or collect your first application to start seeing trend lines here.
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--glass dashboard-card">
+        <h3>Quick Actions</h3>
+        <div class="dashboard-actions">
+          <%= link_to "Create Job", new_job_path, class: "btn btn--primary btn--large" %>
+          <%= link_to "Review Applications", applications_path, class: "btn btn--outline btn--large" %>
+        </div>
+      </section>
+
+      <section class="panel panel--glass dashboard-card dashboard-card--full">
+        <div class="dashboard-card__header">
+          <h3>Recent Jobs</h3>
+          <%= link_to "View All", jobs_path, class: "btn btn--outline btn--small" %>
+        </div>
+
+        <% if @jobs.any? %>
+          <div class="dashboard-table">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Location</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @jobs.limit(5).each do |job| %>
+                  <tr>
+                    <td><strong><%= job.title %></strong></td>
+                    <td>
+                      <span class="status-badge status-<%= job.status %>">
+                        <%= job.status.titleize %>
+                      </span>
+                    </td>
+                    <td class="dashboard-table__muted"><%= job.location || "Remote" %></td>
+                    <td class="dashboard-table__muted"><%= job.created_at.to_date %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="dashboard-empty">No jobs created yet.</p>
+        <% end %>
+      </section>
+    </div>
+  </div>
+</div>

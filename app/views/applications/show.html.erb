@@ -1,0 +1,29 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="applications-page page-shell">
+  <div class="page-container applications-page__container">
+    <header class="applications-header">
+      <div>
+        <h1 class="applications-header__title"><%= @application.candidate.name %></h1>
+        <p class="applications-header__subtitle"><%= @application.candidate.email %></p>
+      </div>
+    </header>
+
+    <div class="applications-detail-grid">
+      <section class="panel panel--glass application-card">
+        <h3 class="application-card__title">Application Details</h3>
+        <div class="application-card__meta"><strong>Job:</strong> <%= @application.job.title %></div>
+        <div class="application-card__meta"><strong>Status:</strong> <%= @application.status.to_s.titleize %></div>
+        <div class="application-card__meta"><strong>Phone:</strong> <%= @application.candidate.phone.presence || "—" %></div>
+        <div class="application-card__meta"><strong>Applied:</strong> <%= l(@application.created_at, format: :long) %></div>
+      </section>
+
+      <section class="panel panel--glass application-card">
+        <h3 class="application-card__title">Cover Letter</h3>
+        <div class="application-card__body">
+          <%= @application.cover_letter.presence || "No cover letter provided." %>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

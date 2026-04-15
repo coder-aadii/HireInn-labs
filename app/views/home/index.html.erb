@@ -1,0 +1,147 @@
+<% content_for :body_class, "landing-page" %>
+
+<%= render "shared/home_navbar" %>
+
+<main class="landing">
+  <section class="marquee">
+    <div class="marquee-track">
+      <span>Automate Recruitment <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>Bias-Free Screening <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>Voice Interviews <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>AI Hiring Manager <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>Automate Recruitment <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>Bias-Free Screening <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>Voice Interviews <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+      <span>AI Hiring Manager <%= image_tag "hireinn_logo_black.png", alt: "HireInn Labs logo", class: "marquee-logo", style: "height: 24px; width: auto; margin: 0 10px; vertical-align: middle;" %> </span>
+    </div>
+  </section>
+  <section class="hero">
+    <div class="landing-container">
+      <p class="eyebrow reveal">AI Hiring Software</p>
+      <h1 class="hero-title reveal">
+        AI Hiring Software
+        <span class="gradient-text">Built To Build Teams</span>
+      </h1>
+      <p class="hero-sub reveal">
+        HireInn Labs replaces manual screening with AI agents that draft job descriptions, rank candidates, and schedule interviews in minutes.
+      </p>
+      <div class="hero-actions reveal">
+        <a class="btn btn--primary" href="#cta">Start Free Trial</a>
+        <a class="btn btn--ghost" href="#features">See It In Action</a>
+      </div>
+      <div class="hero-meta reveal">Free 14-day trial · No credit card · Cancel anytime</div>
+    </div>
+  </section>
+
+
+  <section id="team" class="dark-band reveal">
+    <div class="landing-container split">
+      <div class="copy">
+        <p class="eyebrow">Built by</p>
+        <h2>The HireInn Labs Team</h2>
+        <p>
+          We build AI tooling for HR teams who want to hire faster, smarter, and without bias. Our agents handle the heavy lifting so your team can focus on humans.
+        </p>
+        <a class="btn btn--ghost" href="#features">Learn more about us</a>
+      </div>
+      <div class="card glow">
+        <div class="tag tag--gold">Voice AI</div>
+        <h3>Global Voice Interviews</h3>
+        <p>Automate phone screens with real-time summaries and scoring.</p>
+        <div class="chip">New feature</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="statement reveal">
+    <div class="landing-container center">
+      <h2>
+        AI Hiring Dashboard
+        <span class="script">Multi-Agent</span>
+      </h2>
+      <p>
+        Streamline your hiring process with intelligent automation. Our AI agents handle everything from job descriptions to candidate interviews.
+      </p>
+    </div>
+  </section>
+
+  <section id="agents" class="feature-grid reveal">
+    <div class="landing-container">
+      <div class="grid">
+        <div class="feature-card dark">
+          <h3>Multi-Agent AI</h3>
+          <p>Specialized AI agents work together to revolutionize your hiring process.</p>
+          <a class="btn btn--ghost" href="#cta">Explore Agents</a>
+        </div>
+        <div class="feature-card">
+          <h4>JD Generator</h4>
+          <p>Creates optimized job descriptions.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Resume Checker</h4>
+          <p>Screens and scores candidates.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Interview Chat</h4>
+          <p>Conducts AI-powered interviews.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Voice Calling</h4>
+          <p>Global voice interviews.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta" class="cta reveal">
+    <div class="landing-container center">
+      <h2>Ready to Transform <span class="gradient-text">Your Hiring?</span></h2>
+      <p>Join modern HR teams using HireInn Labs to hire better, faster, and smarter.</p>
+      <div class="hero-actions">
+        <a class="btn btn--primary" href="<%= new_user_registration_path %>">Start Free Trial</a>
+        <a class="btn btn--ghost" href="#">Request Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer reveal">
+    <div class="landing-container">
+      <div class="footer-grid">
+        <div>
+          <h3>Subscribe to HireInn Updates</h3>
+          <p>Get product updates, hiring insights, and AI best practices.</p>
+          <div class="footer-form">
+            <input type="text" placeholder="Your name">
+            <input type="email" placeholder="Work email">
+            <button class="btn btn--primary">Get Updates</button>
+          </div>
+          <p class="fineprint">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+        </div>
+        <div>
+          <h5>Product</h5>
+          <ul>
+            <li>Features</li>
+            <li>Pricing</li>
+            <li>API Documentation</li>
+          </ul>
+        </div>
+        <div>
+          <h5>Company</h5>
+          <ul>
+            <li>About Us</li>
+            <li>Careers</li>
+            <li>Contact</li>
+          </ul>
+        </div>
+        <div>
+          <h5>Resources</h5>
+          <ul>
+            <li>Help Center</li>
+            <li>Privacy Policy</li>
+            <li>Terms of Service</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

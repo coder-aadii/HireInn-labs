@@ -1,0 +1,29 @@
+<div class="job-ai-preview-card ai-preview">
+  <div class="ai-preview-overlay">
+    <div class="job-ai-preview-card__spinner" aria-hidden="true"></div>
+    <div class="job-ai-preview-card__sr-only">Loading...</div>
+    <div class="job-ai-preview-card__loading-text">Generating AI job description...</div>
+  </div>
+
+  <div class="ai-preview-header">
+    <h5>AI Job Description</h5>
+    <% if job.ai_generated? %>
+      <span class="job-ai-preview-card__badge">AI</span>
+    <% end %>
+  </div>
+
+  <% if job.description.present? %>
+    <div class="job-markdown">
+      <%= render_job_markdown(job.description) %>
+    </div>
+  <% else %>
+    <div class="ai-preview-empty">
+      Your AI-generated description will appear here.
+      Fill in the basics and click <strong>Generate with AI</strong>.
+    </div>
+  <% end %>
+
+  <% if flash[:alert].present? %>
+    <div class="job-ai-preview-card__error"><%= flash[:alert] %></div>
+  <% end %>
+</div>

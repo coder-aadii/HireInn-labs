@@ -1,0 +1,109 @@
+#flash {
+  position: fixed;
+  top: 5rem;
+  right: 1.5rem;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+#flash .notice {
+  pointer-events: auto;
+  position: relative;
+  background: rgba(15, 20, 30, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  color: var(--text-1);
+  width: 320px;
+  max-width: 90vw;
+  padding: 1rem 2.5rem 1rem 1.25rem;
+  overflow: hidden;
+  transform: translateX(40px);
+  opacity: 0;
+  animation: flash-slide-in 0.4s ease forwards;
+}
+
+#flash .notice--success {
+  border-left-color: var(--success);
+}
+
+#flash .notice--danger {
+  border-left-color: var(--danger);
+}
+
+#flash .notice::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transform: skewX(-25deg);
+  animation: glass-shine 4s ease-in-out infinite;
+}
+
+.notice__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.notice__close::before,
+.notice__close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 2px;
+  background: var(--text-2);
+  transform-origin: center;
+}
+
+.notice__close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.notice__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+@media (max-width: 576px) {
+  #flash {
+    right: 1rem;
+    left: 1rem;
+    align-items: stretch;
+  }
+
+  #flash .notice {
+    width: 100%;
+  }
+}
+
+.landing-page #flash {
+  top: 1rem;
+}
+
+.app-shell #flash {
+  top: 4.75rem;
+  z-index: 999;
+}
+
+.landing-page #flash .notice {
+  background: rgba(12, 16, 24, 0.9);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-1);
+}

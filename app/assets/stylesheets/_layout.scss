@@ -1,0 +1,17 @@
+.page-shell {
+  padding-top: var(--nav-offset);
+}
+
+.page-container {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+}
+
+.page-container--wide {
+  width: min(1400px, 94vw);
+  margin: 0 auto;
+}
+
+.section {
+  padding: var(--space-6) 0;
+}

@@ -1,0 +1,28 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="job-form-page page-shell">
+  <div class="page-container job-form-page__container">
+    <div class="job-form-page__header job-form-page__header--with-action">
+      <div>
+        <h1 class="job-form-page__title">Edit Job</h1>
+        <p class="job-form-page__intro">Update role details and status.</p>
+      </div>
+      <%= link_to "View", job_path(@job), class: "btn btn--ghost" %>
+    </div>
+
+    <div class="job-form-layout">
+      <div class="job-form-layout__sidebar">
+        <%= turbo_frame_tag "job_ai_preview" do %>
+          <%= render "ai_preview", job: @job %>
+        <% end %>
+      </div>
+      <div class="job-form-layout__main">
+        <%= turbo_frame_tag "job_form" do %>
+          <div class="job-entry-form-card">
+            <%= render "form", job: @job %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

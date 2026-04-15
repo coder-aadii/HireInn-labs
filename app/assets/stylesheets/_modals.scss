@@ -1,0 +1,81 @@
+.dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+}
+
+.dialog.is-open {
+  display: flex;
+}
+
+.dialog__content {
+  pointer-events: auto;
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-lg);
+  max-width: 860px;
+  width: min(860px, 100%);
+}
+
+.dialog__header,
+.dialog__body,
+.dialog__footer {
+  padding: 1rem 1.5rem;
+}
+
+.dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.dialog__title {
+  margin: 0;
+}
+
+.dialog__close {
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  position: relative;
+  color: var(--text-2);
+}
+
+.dialog__close::before,
+.dialog__close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  transform-origin: center;
+}
+
+.dialog__close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.dialog__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 1050;
+}
+
+body.dialog-open {
+  overflow: hidden;
+}

@@ -1,0 +1,42 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="applications-page page-shell">
+  <div class="page-container applications-page__container">
+    <header class="applications-header">
+      <div>
+        <h1 class="applications-header__title">Applications</h1>
+        <p class="applications-header__subtitle">Review candidates who applied to your jobs.</p>
+      </div>
+    </header>
+
+    <% if @applications.any? %>
+      <div class="applications-grid">
+        <% @applications.each do |application| %>
+          <div class="panel panel--glass application-card">
+            <div class="application-card__header">
+              <div>
+                <h3 class="application-card__title"><%= application.candidate.name %></h3>
+                <div class="application-card__meta"><%= application.candidate.email %></div>
+              </div>
+              <span class="tag tag--dark"><%= application.status.to_s.titleize %></span>
+            </div>
+            <div class="application-card__body">
+              <span>Applied for <strong><%= application.job.title %></strong></span>
+            </div>
+            <div class="application-card__actions">
+              <%= link_to "View", application_path(application), class: "btn btn--outline" %>
+              <% if application.resume.attached? %>
+                <%= link_to "Resume", rails_blob_path(application.resume, disposition: "attachment"), class: "btn btn--primary" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="panel panel--glass applications-empty">
+        <h3>No applications yet</h3>
+        <p>Once candidates apply, they’ll appear here.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

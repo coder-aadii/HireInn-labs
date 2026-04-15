@@ -1,0 +1,5 @@
+<% if flash[:notice].present? %>
+  <div class="job-entry-form__message job-entry-form__message--success"><%= flash[:notice] %></div>
+<% elsif flash[:alert].present? %>
+  <div class="job-entry-form__message job-entry-form__message--danger"><%= flash[:alert] %></div>
+<% end %>
