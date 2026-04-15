@@ -119,6 +119,8 @@ This project combines classic Rails CRUD with AI-enhanced workflows in a way tha
 - Dockerfile included
 - Kamal deployment config present
 - Sidekiq initializer configured via `REDIS_URL`
+- production PostgreSQL can be provisioned through Aiven
+- production Redis can be provisioned through Upstash
 
 ## Project Structure
 
@@ -251,6 +253,31 @@ SMTP_ENABLE_STARTTLS_AUTO=true
 
 ```env
 REDIS_URL=redis://127.0.0.1:6379/0
+```
+
+## Production Services
+
+The app is wired to use environment variables in production, so managed services can be swapped in without changing application code.
+
+### PostgreSQL
+
+- Recommended hosted provider: Aiven for PostgreSQL
+- Set the Aiven connection string as:
+
+```env
+DATABASE_URL=postgres://...
+```
+
+### Redis
+
+- Recommended hosted provider: Upstash Redis
+- Use the Upstash Redis endpoint for:
+  - Sidekiq
+  - Redis-backed cache store
+  - Action Cable
+
+```env
+REDIS_URL=rediss://...
 ```
 
 ## Running Tests
