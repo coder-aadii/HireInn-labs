@@ -88,20 +88,5 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: hire_inn_labs_production
-    username: hire_inn_labs
-    password: <%= ENV["HIRE_INN_LABS_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: hire_inn_labs_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: hire_inn_labs_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: hire_inn_labs_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV.fetch("DATABASE_URL") %>
