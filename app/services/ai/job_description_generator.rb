@@ -341,7 +341,13 @@ module Ai
         return "#{months} months" if months.positive?
       end
 
-      "#{number_with_precision(decimal_value, precision: 1, strip_insignificant_zeros: true)}+ years"
+      formatted_value = ActiveSupport::NumberHelper.number_to_rounded(
+        decimal_value,
+        precision: 1,
+        strip_insignificant_zeros: true
+      )
+
+      "#{formatted_value}+ years"
     end
   end
 end
