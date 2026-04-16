@@ -384,13 +384,18 @@
 
 .resume-upload__field {
   flex: 1;
+  position: relative;
 }
 
-/* HIDE DEFAULT INPUT */
+/* CLICKABLE OVERLAY INPUT */
 .resume-upload input[type="file"] {
-  opacity: 0;
   position: absolute;
-  pointer-events: none;
+  inset: 0;
+  width: 100%;
+  height: 48px;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 
 /* CUSTOM FILE BOX */
@@ -407,12 +412,21 @@
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.25s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .resume-upload__field:hover::before {
   border-color: var(--gold-border);
   color: var(--gold);
   background: rgba(212,175,55,0.05);
+}
+
+.resume-upload__field:focus-within::before {
+  border-color: var(--gold-border);
+  color: var(--gold);
+  background: rgba(212,175,55,0.05);
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.12);
 }
 
 /* BUTTON */

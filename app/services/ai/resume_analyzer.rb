@@ -1,5 +1,6 @@
 require "net/http"
 require "json"
+require "uri"
 
 module Ai
   class ResumeAnalyzer
@@ -95,7 +96,7 @@ module Ai
       request = Net::HTTP::Post.new(uri)
       request["Authorization"] = "Bearer #{api_key}"
       request["Content-Type"] = "application/json"
-      request["HTTP-Referer"] = "http://localhost"
+      request["HTTP-Referer"] = app_referer
       request["X-Title"] = "HireInn Labs"
       request.body = JSON.generate(payload)
 
@@ -104,6 +105,13 @@ module Ai
         http.read_timeout = 60
         http.request(request)
       end
+    end
+
+    def app_referer
+      host = ENV["APP_HOST"].presence || "localhost:3000"
+      protocol = ENV["APP_PROTOCOL"].presence || "http"
+      normalized_host = host.sub(/\Ahttps?:\/\//, "")
+      URI("#{protocol}://#{normalized_host}").to_s
     end
 
     def extract_json(text)
