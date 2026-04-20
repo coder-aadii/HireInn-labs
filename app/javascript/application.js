@@ -52,6 +52,38 @@ document.addEventListener("turbo:before-cache", () => {
   teardownPublicCursor()
 })
 
+const updateResumeFileLabels = () => {
+  document.querySelectorAll("input[type='file'][data-file-label-target]").forEach((input) => {
+    if (!(input instanceof HTMLInputElement)) return
+
+    const targetId = input.dataset.fileLabelTarget
+    const label = targetId ? document.getElementById(targetId) : null
+    if (!label) return
+
+    const names = Array.from(input.files || [])
+      .map((file) => file.name)
+      .filter(Boolean)
+
+    label.textContent = names.length ? names.join(", ") : "Choose resumes (PDF, DOC, DOCX)"
+  })
+}
+
+const updateResumeMatchState = () => {
+  document.querySelectorAll("form[data-resume-match-form='true']").forEach((form) => {
+    if (!(form instanceof HTMLFormElement)) return
+
+    const submit = form.querySelector("[data-resume-match-submit='true']")
+    const selectAll = form.querySelector("[data-select-all-resumes='true']")
+    const rowChecks = form.querySelectorAll("input[name='resume_ids[]']")
+    const anySelected = Array.from(rowChecks).some((checkbox) => checkbox.checked)
+    const enabled = anySelected || (selectAll instanceof HTMLInputElement && selectAll.checked)
+
+    if (submit instanceof HTMLButtonElement || submit instanceof HTMLInputElement) {
+      submit.disabled = !enabled
+    }
+  })
+}
+
 const getDialogBackdrop = () => document.querySelector(".dialog-backdrop")
 
 const showDialog = (dialog) => {
@@ -78,6 +110,42 @@ const hideDialog = (dialog) => {
 }
 
 document.addEventListener("click", (event) => {
+  const downloadMatchPdf = event.target.closest("[data-download-match-pdf='true']")
+  if (downloadMatchPdf) {
+    event.preventDefault()
+    const surface = downloadMatchPdf.closest("[data-match-details-surface='true']")
+    if (!surface) return
+
+    const candidateName = surface.dataset.candidateName || "candidate"
+    const printWindow = window.open("", "_blank", "width=960,height=1200")
+    if (!printWindow) return
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${candidateName} Match Details</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 24px; color: #111; }
+            .match-details-footer, .match-details-close { display: none !important; }
+            .match-details-surface { border: 0; box-shadow: none; max-height: none; }
+            .match-details-header { margin-bottom: 20px; }
+            .match-details-meta { display: flex; gap: 12px; align-items: center; margin-top: 8px; color: #444; }
+            .match-score { display: inline-block; padding: 4px 10px; border: 1px solid #b88912; border-radius: 999px; font-weight: 700; color: #b88912; }
+            .match-section { padding: 14px 0; border-top: 1px solid #ddd; }
+            .match-section:first-of-type { border-top: none; }
+            .match-section h6 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: #666; }
+            .match-section p { margin: 0; line-height: 1.6; white-space: pre-wrap; }
+          </style>
+        </head>
+        <body>${surface.outerHTML}</body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    printWindow.print()
+    return
+  }
+
   const dialogTrigger = event.target.closest("[data-ui-toggle='dialog']")
   if (dialogTrigger) {
     event.preventDefault()
@@ -133,4 +201,54 @@ document.addEventListener("click", (event) => {
     pane.classList.remove("is-active")
   })
   tabPanel.classList.add("is-active")
+})
+
+document.addEventListener("change", (event) => {
+  const fileInput = event.target.closest("input[type='file'][data-file-label-target]")
+  if (fileInput) {
+    updateResumeFileLabels()
+    return
+  }
+
+  const selectAll = event.target.closest("[data-select-all-resumes='true']")
+  if (selectAll instanceof HTMLInputElement) {
+    const form = selectAll.closest("form[data-resume-match-form='true']")
+    form?.querySelectorAll("input[name='resume_ids[]']").forEach((checkbox) => {
+      checkbox.checked = selectAll.checked
+    })
+    updateResumeMatchState()
+    return
+  }
+
+  const rowCheck = event.target.closest("input[name='resume_ids[]']")
+  if (rowCheck instanceof HTMLInputElement) {
+    const form = rowCheck.closest("form[data-resume-match-form='true']")
+    const selectAllInput = form?.querySelector("[data-select-all-resumes='true']")
+
+    if (selectAllInput instanceof HTMLInputElement) {
+      const rowChecks = Array.from(form.querySelectorAll("input[name='resume_ids[]']"))
+      selectAllInput.checked = rowChecks.length > 0 && rowChecks.every((checkbox) => checkbox.checked)
+    }
+
+    updateResumeMatchState()
+  }
+})
+
+document.addEventListener("submit", (event) => {
+  const form = event.target.closest("form[data-resume-match-form='true']")
+  if (!(form instanceof HTMLFormElement)) return
+
+  const selectAll = form.querySelector("[data-select-all-resumes='true']")
+  const anySelected = Array.from(form.querySelectorAll("input[name='resume_ids[]']")).some((checkbox) => checkbox.checked)
+  const selectAllChecked = selectAll instanceof HTMLInputElement && selectAll.checked
+
+  if (anySelected || selectAllChecked) return
+
+  event.preventDefault()
+  window.alert("Select at least one resume before running AI match.")
+})
+
+document.addEventListener("turbo:load", () => {
+  updateResumeFileLabels()
+  updateResumeMatchState()
 })

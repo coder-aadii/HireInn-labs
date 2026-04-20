@@ -112,7 +112,6 @@ class PublicCursor {
     const el = event.target.closest(INTERACTIVE_SELECTOR)
     if (!el) return
 
-    // Optional: slight scale for premium feel
     this.cursor.style.transform += " scale(1.1)"
   }
 
@@ -120,7 +119,6 @@ class PublicCursor {
     const el = event.relatedTarget?.closest(INTERACTIVE_SELECTOR)
     if (el) return
 
-    // reset scale
     this.cursor.style.transform = this.cursor.style.transform.replace(" scale(1.1)", "")
   }
 
