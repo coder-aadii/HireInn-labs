@@ -19,19 +19,19 @@
         </div>
 
         <div class="careers-detail__section">
-          <%= render_markdown(@job.description) %>
+          <%= render_overview_markdown(@job.description) %>
         </div>
 
         <% if @job.requirements.present? %>
           <div class="careers-detail__section">
-            <h3>Requirements</h3>
+            <h3>Required Technical Skills</h3>
             <%= render_markdown(@job.requirements) %>
           </div>
         <% end %>
 
         <% if @job.benefits.present? %>
           <div class="careers-detail__section">
-            <h3>Benefits</h3>
+            <h3>Benefits and Nice-to-Haves</h3>
             <%= render_markdown(@job.benefits) %>
           </div>
         <% end %>
@@ -45,7 +45,7 @@
         <h3>Apply for this role</h3>
         <p class="careers-apply__intro">Share your details and attach your resume.</p>
 
-        <%= form_with url: career_applications_path(@job), scope: :application, html: { multipart: true }, class: "careers-apply__form" do |form| %>
+        <%= form_with url: career_apply_path(@job), scope: :application, html: { multipart: true }, class: "careers-apply__form" do |form| %>
           <div class="careers-apply__field">
             <%= form.label :name, class: "label" %>
             <%= form.text_field :name, class: "input" %>

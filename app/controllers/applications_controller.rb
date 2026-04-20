@@ -18,7 +18,7 @@ class ApplicationsController < ApplicationController
   end
 
   def create
-    @job = Job.published.find_by!(slug: params[:id])
+    @job = Job.published.find_by!(slug: params[:career_id] || params[:id])
 
     payload = application_params
     candidate = Candidate.find_or_initialize_by(email: payload[:email].to_s.strip.downcase)

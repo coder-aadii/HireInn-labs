@@ -25,7 +25,7 @@ class ApplicationsControllerTest < ActionDispatch::IntegrationTest
   test "creates an application and emails the applicant" do
     assert_difference -> { Candidate.count }, 1 do
       assert_difference -> { Application.count }, 1 do
-        post career_applications_path(@job), params: {
+        post career_apply_path(@job), params: {
           application: {
             name: "Jane Candidate",
             email: "jane@example.com",
