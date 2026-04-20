@@ -11,7 +11,7 @@ module Ai
 
     ENDPOINT = "https://openrouter.ai/api/v1/chat/completions".freeze
 
-    def call(title:, company_name:, location:, employment_type:, experience_min:)
+    def call(title:, company_name:, location:, employment_type:, experience_min:, **_unused)
       raise Error, "Job title is required for AI generation." if title.to_s.strip.empty?
 
       api_key = ENV["OPEN_ROUTER_API"].to_s
@@ -46,21 +46,26 @@ module Ai
           when 200
             parsed = JSON.parse(response.body)
             content = parsed.dig("choices", 0, "message", "content").to_s
+            Rails.logger.info("[AI JD] Raw content from #{candidate}: #{content}")
             data = parse_json(content)
+            Rails.logger.info("[AI JD] Parsed JSON from #{candidate}: #{JSON.generate(data)}")
             normalized_data = normalize_generated_content(data, experience_min)
+            Rails.logger.info("[AI JD] Normalized content from #{candidate}: #{JSON.generate(normalized_data)}")
 
-            description_markdown = data["description_markdown"].to_s
+            description_markdown = normalized_data["description_markdown"].to_s
             description_markdown = build_full_markdown(
               description_markdown,
               title: title,
               company_name: company_name,
               location: location,
               employment_type: employment_type,
+              experience_min: experience_min,
               role_overview: normalized_data["role_overview"],
               responsibilities: normalized_data["responsibilities"],
               requirements: normalized_data["requirements"],
               benefits: normalized_data["benefits"]
             )
+            Rails.logger.info("[AI JD] Final markdown from #{candidate}: #{description_markdown}")
 
             return {
               description_markdown: description_markdown,
@@ -119,10 +124,11 @@ module Ai
       <<~PROMPT.squish
         You are an expert HR copywriter. Return only valid JSON with keys: description_markdown,
         responsibilities (array), requirements (array), benefits (array), skills (array), role_overview (string).
-        No extra text. The description_markdown MUST include all sections: Job Title line, Company, Location,
-        Employment Type, Role Overview, Key Responsibilities, Required Technical Skills and Experience Levels,
-        Preferred Qualifications and Nice-to-Haves. Provide at least 6 bullets for responsibilities, 6 for
-        required skills/experience, and 5 for preferred qualifications.
+        No extra text. The description_markdown MUST include all sections:
+        Job Title line, Company, Location, Employment Type, Experience, Role Overview,
+        Key Responsibilities, Required Technical Skills, Preferred Qualifications and Nice-to-Haves.
+        Provide at least 6 bullets for responsibilities, 6 for required skills/experience, and 5 for
+        preferred qualifications.
         Experience requirements are strict constraints, not suggestions:
         if minimum experience is 0, treat the role as fresher/entry-level and do not mention 1+, 2+, or any
         higher minimum years anywhere.
@@ -143,21 +149,17 @@ module Ai
         - benefits (array, 5-7 bullets for preferred qualifications)
         - skills (array, 6-10 skills)
 
-        ## Job Title: <title>
         **Company:** <company>
         **Location:** <location>
         **Employment Type:** <employment type>
+        **Experience:** <experience>
 
-        ### Role Overview:
         <one paragraph>
 
-        ### Key Responsibilities:
         - ...
 
-        ### Required Technical Skills and Experience Levels:
         - ...
 
-        ### Preferred Qualifications and Nice-to-Haves:
         - ...
 
         Input:
@@ -165,7 +167,7 @@ module Ai
         - Company: #{company_name.presence || "Confidential"}
         - Location: #{location.presence || "Remote"}
         - Employment Type: #{employment_type.presence || "Full-time"}
-        - Minimum Experience: #{formatted_experience(experience_min)}
+        - Experience: #{formatted_experience_label(experience_min)}
 
         Hard rules you must obey:
         - Never increase the minimum experience beyond the provided value.
@@ -181,6 +183,7 @@ module Ai
 
         Make the content feel modern, confident, and enterprise-ready.
         Ensure the markdown includes all sections and is long-form.
+        Put the exact experience text in the top metadata block.
       PROMPT
     end
 
@@ -248,10 +251,8 @@ module Ai
       ].compact.uniq
     end
 
-    def build_full_markdown(existing, title:, company_name:, location:, employment_type:, role_overview:, responsibilities:, requirements:, benefits:)
+    def build_full_markdown(existing, title:, company_name:, location:, employment_type:, experience_min:, role_overview:, responsibilities:, requirements:, benefits:)
       normalized = existing.to_s
-      return normalized if normalized.include?("### Key Responsibilities") && normalized.include?("### Required Technical Skills")
-
       overview = role_overview.presence || extract_overview_from(existing) || "Add a concise role overview."
       responsibilities_list = Array(responsibilities).presence || []
       requirements_list = Array(requirements).presence || []
@@ -262,14 +263,15 @@ module Ai
         **Company:** #{company_name.presence || "Confidential"}
         **Location:** #{location.presence || "Remote"}
         **Employment Type:** #{employment_type.presence || "Full-time"}
+        **Experience:** #{formatted_experience_label(experience_min)}
 
         ### Role Overview:
-        #{overview}
+        #{overview.presence || normalized.presence || "Add a concise role overview."}
 
         ### Key Responsibilities:
         #{bullet_lines(responsibilities_list)}
 
-        ### Required Technical Skills and Experience Levels:
+        ### Required Technical Skills:
         #{bullet_lines(requirements_list)}
 
         ### Preferred Qualifications and Nice-to-Haves:
@@ -290,27 +292,31 @@ module Ai
 
     def normalize_generated_content(data, experience_min)
       normalized = data.deep_dup
-      normalized["responsibilities"] = Array(normalized["responsibilities"])
-      normalized["requirements"] = normalize_requirements(Array(normalized["requirements"]), experience_min)
-      normalized["benefits"] = Array(normalized["benefits"])
-      normalized["skills"] = Array(normalized["skills"])
+
+      normalized["responsibilities"] = Array(normalized["responsibilities"]).map(&:to_s).map(&:strip).reject(&:blank?)
+
+      requirements = normalize_requirements(Array(normalized["requirements"]), experience_min)
+      requirements = remove_garbage_requirements!(requirements)
+
+      normalized["requirements"] = requirements
+
+      normalized["benefits"] = Array(normalized["benefits"]).map(&:to_s).map(&:strip).reject(&:blank?)
+      normalized["skills"] = Array(normalized["skills"]).map(&:to_s).map(&:strip).reject(&:blank?)
+
       normalized["role_overview"] = sanitize_experience_copy(normalized["role_overview"].to_s, experience_min)
       normalized["description_markdown"] = sanitize_experience_copy(normalized["description_markdown"].to_s, experience_min)
+
       normalized
     end
 
     def normalize_requirements(requirements, experience_min)
-      cleaned = requirements.map { |item| sanitize_experience_copy(item.to_s, experience_min) }
+      cleaned = requirements
+        .map { |item| sanitize_experience_copy(item.to_s, experience_min) }
+        .map(&:strip)
+        .reject(&:blank?)
 
-      if fresher_role?(experience_min)
-        cleaned.reject! { |item| item.match?(/\b[1-9]\d*(\.\d+)?\+?\s+years?\b/i) }
-        cleaned.unshift("Open to freshers and entry-level candidates; prior full-time experience is not mandatory.")
-      elsif sub_year_role?(experience_min)
-        allowed_months = [(experience_min.to_d * 12).round, 1].max
-        cleaned.reject! { |item| item.match?(/\b[1-9]\d*(\.\d+)?\+?\s+years?\b/i) }
-        cleaned.unshift("Candidates with around #{allowed_months} months of relevant experience can apply.")
-      end
-
+      cleaned.reject! { |item| experience_requirement_line?(item) }
+      cleaned.unshift(exact_experience_requirement_line(experience_min))
       cleaned.uniq
     end
 
@@ -321,10 +327,16 @@ module Ai
       if fresher_role?(experience_min)
         content = content.gsub(/\bminimum of\s+\d+(\.\d+)?\+?\s+years?\b/i, "entry-level experience")
         content = content.gsub(/\b\d+(\.\d+)?\+?\s+years?\s+of\s+experience\b/i, "entry-level experience")
+        content = content.gsub(/\bexperienced professional\b/i, "trainable candidate")
       elsif sub_year_role?(experience_min)
         months = [(experience_min.to_d * 12).round, 1].max
         content = content.gsub(/\bminimum of\s+\d+(\.\d+)?\+?\s+years?\b/i, "up to #{months} months of relevant experience")
         content = content.gsub(/\b\d+(\.\d+)?\+?\s+years?\s+of\s+experience\b/i, "#{months} months of relevant experience")
+        content = content.gsub(/\bexperienced professional\b/i, "trainable candidate")
+      else
+        content = content.gsub(/(^|\s)(freshers?|entry[-\s]?level candidates?|entry[-\s]?level|no experience required|interns?)\b.*?(?=[\.\n]|$)/i, "")
+        content = content.gsub(/\s{2,}/, " ").strip
+        content = content.sub(/\A[\.,:;\-\s]+/, "").strip
       end
 
       content
@@ -357,5 +369,33 @@ module Ai
 
       "#{formatted_value}+ years"
     end
+
+    def remove_garbage_requirements!(requirements)
+      requirements.reject do |item|
+        item.strip.length < 5 || item.match?(/\bfreshness\b/i)
+      end
+    end
+
+    def experience_requirement_line?(item)
+      item.match?(/fresher|entry[-\s]?level|no experience|required experience|months of relevant experience|\byears?\b/i)
+    end
+
+    def exact_experience_requirement_line(experience_min)
+      return "Open to freshers and entry-level candidates; prior full-time experience is not mandatory." if fresher_role?(experience_min)
+
+      if sub_year_role?(experience_min)
+        months = [(experience_min.to_d * 12).round, 1].max
+        return "Candidates with around #{months} months of relevant experience can apply."
+      end
+
+      "Minimum #{formatted_experience(experience_min)} of relevant experience required."
+    end
+
+    def formatted_experience_label(experience_min)
+      return experience_min if experience_min.is_a?(String) && experience_min.present?
+
+      formatted_experience(experience_min)
+    end
+
   end
 end
