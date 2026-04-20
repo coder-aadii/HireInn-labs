@@ -1,42 +1,90 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<%= render "shared/dashboard_nav" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="profiles-page page-shell">
+  <div class="page-container profiles-page__container">
+    <header class="profiles-header profiles-header--show">
+      <div>
+        <h1 class="profiles-header__title">Account Settings</h1>
+        <p class="profiles-header__subtitle">
+          Keep your account secure by updating your password while preserving the email tied to your workspace.
+        </p>
+      </div>
+      <div class="profiles-header__actions">
+        <%= link_to "Profile", profile_path, class: "btn btn--ghost" %>
+      </div>
+    </header>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+    <div class="profiles-layout profiles-layout--show">
+      <section class="panel panel--glass profile-card profile-card--hero">
+        <div class="profile-card__eyebrow">Security</div>
+        <h2 class="profile-settings__title">Update your sign-in credentials</h2>
+        <p class="profile-settings__intro">
+          Your account email is locked to protect identity continuity. If you change your password, we’ll ask for the current one before saving.
+        </p>
+
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "profile-form" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <div class="profile-form__grid">
+            <div class="profile-form__field profile-form__field--full">
+              <%= f.label :email, class: "label" %>
+              <%= f.email_field :email, readonly: true, class: "input input--large", autocomplete: "email" %>
+            </div>
+
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <div class="profile-form__notice profile-form__field--full">
+                <div class="profile-details-item">
+                  <span class="profile-details-item__label">Pending Confirmation</span>
+                  <strong><%= resource.unconfirmed_email %></strong>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="profile-form__field profile-form__field--full">
+              <%= f.label :password, class: "label" do %>
+                New Password
+              <% end %>
+              <%= f.password_field :password, autocomplete: "new-password", class: "input input--large", placeholder: "Enter a new stromg Password" %>
+              <% if @minimum_password_length %>
+                <p class="profile-settings__hint"><%= @minimum_password_length %> characters minimum</p>
+              <% end %>
+            </div>
+
+            <div class="profile-form__field">
+              <%= f.label :password_confirmation, "Confirm New Password", class: "label" %>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "input input--large", placeholder: "Repeat your new password" %>
+            </div>
+
+            <div class="profile-form__field">
+              <%= f.label :current_password, class: "label" do %>
+                Current Password
+              <% end %>
+              <%= f.password_field :current_password, autocomplete: "current-password", class: "input input--large", placeholder: "Required to confirm changes" %>
+            </div>
+          </div>
+
+          <div class="profile-form__actions">
+            <%= link_to "Back", profile_path, class: "btn btn--ghost btn--large" %>
+            <%= f.submit "Save Changes", class: "btn btn--primary btn--large" %>
+          </div>
+        <% end %>
+      </section>
+
+      <aside class="panel panel--glass profile-card profile-card--aside">
+        <h6 class="profile-card__eyebrow">Account Notes</h6>
+        <div class="profile-card__stat">
+          <span>Email</span>
+          <strong><%= resource.email %></strong>
+        </div>
+        <div class="profile-card__stat">
+          <span>Password Changes</span>
+          <strong>Require current password verification</strong>
+        </div>
+        <div class="profile-card__stat">
+          <span>Security Tip</span>
+          <strong>Use a strong, unique password for your hiring workspace.</strong>
+        </div>
+      </aside>
+    </div>
   </div>
-
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
-
-  <div class="field">
-    <p><%= f.label :password %> <i>(leave blank if you don't want to change it)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> characters minimum</em></p>
-    <% end %>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

@@ -1,16 +1,67 @@
-<h2>Resend unlock instructions</h2>
+<% content_for :body_class, "landing-page" %>
 
-<%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<%= render "shared/home_navbar" %>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+<div class="landing auth-page page-shell">
+  <div class="page-container auth-page__container">
+    <div class="auth-stage">
+      <section class="auth-showcase">
+        <div class="auth-showcase__content">
+          <div class="auth-showcase__badge">Unlock Access</div>
+          <h2 class="auth-showcase__title">Restore access without losing your place.</h2>
+          <p class="auth-showcase__text">
+            If your account was locked temporarily, we’ll send the instructions you need to unlock it and continue where you left off.
+          </p>
+
+          <div class="auth-showcase__stats">
+            <div class="auth-showcase__stat">
+              <strong>Protected</strong>
+              <span>Unlock instructions go only to valid accounts.</span>
+            </div>
+            <div class="auth-showcase__stat">
+              <strong>Simple</strong>
+              <span>Follow the latest email if multiple messages arrive.</span>
+            </div>
+            <div class="auth-showcase__stat">
+              <strong>Safe</strong>
+              <span>Use the correct password after unlocking to avoid another lockout.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-showcase__footer">
+          <p class="auth-showcase__quote">
+            “Recovery should preserve trust as much as it restores access.”
+            <strong>HireInn Labs</strong>
+          </p>
+        </div>
+      </section>
+
+      <section class="auth-pane">
+        <div class="auth-card__eyebrow">Unlock Access</div>
+        <h1 class="auth-card__title">Resend unlock instructions</h1>
+        <p class="auth-card__intro">
+          If your account was temporarily locked, enter your email and we’ll send the instructions needed to restore access.
+        </p>
+
+        <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post, class: "auth-form" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <div class="auth-form__grid">
+            <div class="auth-form__field auth-form__field--full">
+              <%= f.label :email, class: "label" %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input input--large", placeholder: "you@company.com" %>
+            </div>
+          </div>
+
+          <div class="auth-form__actions">
+            <div class="auth-form__meta">We’ll send fresh unlock instructions to this email</div>
+            <%= f.submit "Resend Unlock Instructions", class: "btn btn--primary btn--large" %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </section>
+    </div>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Resend unlock instructions" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

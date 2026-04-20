@@ -1,26 +1,79 @@
-<h2>Log in</h2>
+<% content_for :body_class, "landing-page" %>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+<%= render "shared/home_navbar" %>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
+<div class="landing auth-page page-shell">
+  <div class="page-container auth-page__container">
+    <div class="auth-stage">
+      <section class="auth-showcase">
+        <div class="auth-showcase__content">
+          <div class="auth-showcase__badge">Hiring Workspace</div>
+          <h2 class="auth-showcase__title">Momentum, clarity, and control for every hiring cycle.</h2>
+          <p class="auth-showcase__text">
+            Manage public job posts, applicant flow, AI-assisted screening, and internal collaboration from one place that actually feels premium.
+          </p>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p><%= f.label :remember_me %></p>
+          <div class="auth-showcase__stats">
+            <div class="auth-showcase__stat">
+              <strong>Roles</strong>
+              <span>Publish polished openings in minutes.</span>
+            </div>
+            <div class="auth-showcase__stat">
+              <strong>Applicants</strong>
+              <span>Track every candidate in one focused pipeline.</span>
+            </div>
+            <div class="auth-showcase__stat">
+              <strong>AI Review</strong>
+              <span>Speed up resume analysis without losing context.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-showcase__footer">
+          <p class="auth-showcase__quote">
+            “A hiring system should feel fast, calm, and trustworthy before the first role is even published.”
+            <strong>HireInn Labs</strong>
+          </p>
+        </div>
+      </section>
+
+      <section class="auth-pane">
+        <div class="auth-card__eyebrow">Welcome Back</div>
+        <h1 class="auth-card__title">Log in to your hiring workspace</h1>
+        <p class="auth-card__intro">
+          Access your dashboard, live roles, candidate pipeline, and interview operations from the same polished control room.
+        </p>
+
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form" }) do |f| %>
+          <div class="auth-form__grid">
+            <div class="auth-form__field auth-form__field--full">
+              <%= f.label :email, class: "label" %>
+              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input input--large", placeholder: "you@company.com" %>
+            </div>
+
+            <div class="auth-form__field auth-form__field--full">
+              <%= f.label :password, class: "label" %>
+              <%= f.password_field :password, autocomplete: "current-password", class: "input input--large", placeholder: "Enter your password" %>
+            </div>
+
+            <% if devise_mapping.rememberable? %>
+              <div class="auth-form__field auth-form__field--full">
+                <label class="auth-form__remember">
+                  <%= f.check_box :remember_me %>
+                  <span>Keep me signed in on this device</span>
+                </label>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="auth-form__actions">
+            <div class="auth-form__meta">Secure access for your hiring workspace</div>
+            <%= f.submit "Log In", class: "btn btn--primary btn--large" %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </section>
     </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "Log in" %>
   </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

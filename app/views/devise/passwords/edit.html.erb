@@ -1,25 +1,76 @@
-<h2>Change your password</h2>
+<% content_for :body_class, "landing-page" %>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+<%= render "shared/home_navbar" %>
 
-  <div class="field">
-    <p><%= f.label :password, "New password" %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
-    <% end %>
-    <p><%= f.password_field :password, autofocus: true, autocomplete: "new-password" %></p>
+<div class="landing auth-page page-shell">
+  <div class="page-container auth-page__container">
+    <div class="auth-stage">
+      <section class="auth-showcase">
+        <div class="auth-showcase__content">
+          <div class="auth-showcase__badge">Security Refresh</div>
+          <h2 class="auth-showcase__title">Choose a stronger password and continue with confidence.</h2>
+          <p class="auth-showcase__text">
+            Create a fresh password for your workspace and use it on your next sign-in. Keep it unique and easy for you to remember.
+          </p>
+
+          <div class="auth-showcase__stats">
+            <div class="auth-showcase__stat">
+              <strong>Unique</strong>
+              <span>Avoid passwords already used in other products.</span>
+            </div>
+            <div class="auth-showcase__stat">
+              <strong>Long</strong>
+              <span>Longer passphrases are stronger and easier to recall.</span>
+            </div>
+            <div class="auth-showcase__stat">
+              <strong>Current</strong>
+              <span>Your old password stops working once this is saved.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-showcase__footer">
+          <p class="auth-showcase__quote">
+            “Security should feel elegant, not intimidating.”
+            <strong>HireInn Labs</strong>
+          </p>
+        </div>
+      </section>
+
+      <section class="auth-pane">
+        <div class="auth-card__eyebrow">New Password</div>
+        <h1 class="auth-card__title">Choose a fresh password</h1>
+        <p class="auth-card__intro">
+          Set a strong replacement password for your workspace and use it the next time you log in.
+        </p>
+
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "auth-form" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <%= f.hidden_field :reset_password_token %>
+
+          <div class="auth-form__grid">
+            <div class="auth-form__field">
+              <%= f.label :password, "New Password", class: "label" %>
+              <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "input input--large", placeholder: "Create a strong new password" %>
+              <% if @minimum_password_length %>
+                <p class="auth-form__hint"><%= @minimum_password_length %> characters minimum</p>
+              <% end %>
+            </div>
+
+            <div class="auth-form__field">
+              <%= f.label :password_confirmation, "Confirm New Password", class: "label" %>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "input input--large", placeholder: "Repeat your new password" %>
+            </div>
+          </div>
+
+          <div class="auth-form__actions">
+            <div class="auth-form__meta">Use a unique password you have not used elsewhere</div>
+            <%= f.submit "Change Password", class: "btn btn--primary btn--large" %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </section>
+    </div>
   </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation, "Confirm new password" %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
