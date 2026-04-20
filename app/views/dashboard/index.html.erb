@@ -6,7 +6,7 @@
       <div>
         <h1 class="dashboard-header__title">Dashboard</h1>
         <p class="dashboard-header__subtitle">
-          Welcome back, <strong><%= current_user.email %></strong>
+          Welcome back, <strong><%= current_user&.profile&.first_name || current_user.email %></strong>
         </p>
       </div>
     </header>
@@ -19,12 +19,12 @@
       </div>
       <div class="dashboard-metric">
         <div class="dashboard-metric__label">Candidates</div>
-        <div class="dashboard-metric__value"><%= @jobs.sum { |job| job.applications.count + job.job_resumes.count } %></div>
+        <div class="dashboard-metric__value"><%= @hiring_activity_totals[:applications] %></div>
         <div class="dashboard-metric__hint">Total applicants</div>
       </div>
       <div class="dashboard-metric">
         <div class="dashboard-metric__label">AI Analyses</div>
-        <div class="dashboard-metric__value">0</div>
+        <div class="dashboard-metric__value"><%= @ai_analyses_count %></div>
         <div class="dashboard-metric__hint">Processed resumes</div>
       </div>
       <div class="dashboard-metric">
@@ -37,19 +37,36 @@
     <div class="dashboard-grid">
       <section class="panel panel--glass dashboard-card dashboard-card--wide">
         <div class="dashboard-card__header">
-          <h3>Hiring Activity</h3>
-          <span class="dashboard-card__meta">Last 30 days</span>
+          <div>
+            <h3>Hiring Activity</h3>
+            <span class="dashboard-card__meta"><%= @selected_chart_period_label %></span>
+          </div>
+          <%= form_with url: "/dashboard", method: :get, local: true, class: "dashboard-scale-form" do |form| %>
+            <%= form.label :period, "Period", class: "dashboard-scale-form__label" %>
+            <%= form.select :period,
+                            options_for_select(@chart_period_options, @selected_chart_period),
+                            {},
+                            class: "dashboard-scale-form__select",
+                            onchange: "this.form.requestSubmit()" %>
+            <%= form.label :scale, "Scale", class: "dashboard-scale-form__label" %>
+            <%= form.select :scale,
+                            options_for_select(@chart_scale_options.map { |value| ["#{value}", value] }, params[:scale].presence),
+                            { include_blank: "Auto" },
+                            class: "dashboard-scale-form__select",
+                            onchange: "this.form.requestSubmit()" %>
+          <% end %>
         </div>
         <div class="dashboard-card__body">
-          <% max_value = [@hiring_activity.map { |point| [point[:jobs], point[:applications]].max }.max.to_i, 1].max %>
+          <% shared_max = @selected_chart_scale %>
           <% chart_height = 220 %>
           <% chart_width = 860.0 %>
           <% baseline = 190.0 %>
           <% usable_height = 130.0 %>
           <% step_x = chart_width / [@hiring_activity.size - 1, 1].max %>
+          <% label_indexes = [0, (@hiring_activity.size - 1) / 2, @hiring_activity.size - 1].uniq %>
           <% application_points = @hiring_activity.each_with_index.map do |point, index|
                x = (index * step_x).round(2)
-               y = (baseline - (point[:applications].to_f / max_value) * usable_height).round(2)
+               y = (baseline - (point[:applications].to_f / shared_max) * usable_height).round(2)
                "#{x},#{y}"
              end.join(" ") %>
 
@@ -62,6 +79,9 @@
               <div class="dashboard-chart__legend-item">
                 <span class="dashboard-chart__legend-swatch dashboard-chart__legend-swatch--jobs"></span>
                 <span>Jobs posted: <strong><%= @hiring_activity_totals[:jobs] %></strong></span>
+              </div>
+              <div class="dashboard-chart__legend-item dashboard-chart__legend-item--muted">
+                Scale max: <strong><%= shared_max %></strong>
               </div>
               <% if @hiring_activity_totals[:peak_day].present? && (@hiring_activity_totals[:peak_day][:applications] + @hiring_activity_totals[:peak_day][:jobs]).positive? %>
                 <div class="dashboard-chart__legend-item dashboard-chart__legend-item--muted">
@@ -78,7 +98,7 @@
 
                 <% @hiring_activity.each_with_index do |point, index| %>
                   <% x = (index * step_x).round(2) %>
-                  <% bar_height = ((point[:jobs].to_f / max_value) * usable_height).round(2) %>
+                  <% bar_height = ((point[:jobs].to_f / shared_max) * usable_height).round(2) %>
                   <% bar_y = (baseline - bar_height).round(2) %>
                   <% if point[:jobs].positive? %>
                     <rect
@@ -92,14 +112,15 @@
                   <% end %>
 
                   <% if point[:applications].positive? %>
-                    <% dot_y = (baseline - (point[:applications].to_f / max_value) * usable_height).round(2) %>
+                    <% dot_y = (baseline - (point[:applications].to_f / shared_max) * usable_height).round(2) %>
                     <circle cx="<%= x %>" cy="<%= dot_y %>" r="4.5" class="dashboard-chart__dot" />
                   <% end %>
                 <% end %>
 
                 <polyline points="<%= application_points %>" class="dashboard-chart__line" />
 
-                <% [[0, @hiring_activity.first], [14, @hiring_activity[14]], [29, @hiring_activity.last]].each do |index, point| %>
+                <% label_indexes.each do |index| %>
+                  <% point = @hiring_activity[index] %>
                   <% next unless point %>
                   <% x = (index * step_x).round(2) %>
                   <text x="<%= x %>" y="214" class="dashboard-chart__label"><%= point[:date].strftime("%b %-d") %></text>

@@ -13,9 +13,7 @@
       </div>
       <div class="job-show-actions">
         <% if @job.published? %>
-          <button type="button" class="btn btn--outline btn--published" disabled aria-disabled="true">
-            Published
-          </button>
+          <%= link_to "See Published", career_path(@job), class: "btn btn--outline btn--small" %>
         <% else %>
           <button type="button" class="btn btn--primary" data-ui-toggle="dialog" data-ui-target="#publishJobDialog">
             Publish
@@ -48,7 +46,7 @@
               </div>
 
               <div class="job-markdown">
-                <%= render_job_markdown(@job.description) %>
+                <%= render_job_overview_markdown(@job.description) %>
                 <% if @job.description.blank? %>
                   <p class="job-show-muted">No description yet.</p>
                 <% end %>
@@ -66,21 +64,21 @@
             </div>
 
             <div class="panel panel--glass job-show-card">
-              <h3>Requirements</h3>
+              <h3>Required Technical Skills</h3>
               <div class="job-markdown">
                 <%= render_job_markdown(@job.requirements) %>
                 <% if @job.requirements.blank? %>
-                  <p class="job-show-muted">No requirements listed.</p>
+                  <p class="job-show-muted">No technical skills listed.</p>
                 <% end %>
               </div>
             </div>
 
             <div class="panel panel--glass job-show-card">
-              <h3>Benefits</h3>
+              <h3>Benefits and Nice-to-Haves</h3>
               <div class="job-markdown">
                 <%= render_job_markdown(@job.benefits) %>
                 <% if @job.benefits.blank? %>
-                  <p class="job-show-muted">No benefits listed.</p>
+                  <p class="job-show-muted">No preferred qualifications listed.</p>
                 <% end %>
               </div>
             </div>
@@ -129,7 +127,8 @@
 
           <%= form_with url: job_resumes_path(@job), scope: :job_resume, html: { multipart: true }, class: "resume-upload" do |form| %>
             <div class="resume-upload__field">
-              <%= form.file_field :files, class: "input", multiple: true, accept: ".pdf,.doc,.docx", required: true %>
+              <%= form.file_field :files, class: "input", multiple: true, accept: ".pdf,.doc,.docx", required: true, data: { file_label_target: "resume-upload-label-#{@job.id}" } %>
+              <div class="resume-upload__label" id="resume-upload-label-<%= @job.id %>">Choose resumes (PDF, DOC, DOCX)</div>
               <small class="job-show-muted">Max 5 files per upload.</small>
             </div>
             <div class="resume-upload__actions">
@@ -147,13 +146,13 @@
           </div>
 
           <% if @resumes&.any? %>
-            <%= form_with url: match_job_resumes_path(@job), method: :post, class: "resume-match-form" do |form| %>
+            <%= form_with url: match_job_resumes_path(@job), method: :post, class: "resume-match-form", data: { resume_match_form: true } do |form| %>
               <div class="resume-match-actions">
                 <label class="checkbox">
-                  <%= check_box_tag :match_all, "1", false, class: "checkbox__input" %>
-                  <span class="checkbox__label">Match all</span>
+                  <%= check_box_tag :match_all, "1", false, class: "checkbox__input", data: { select_all_resumes: true } %>
+                  <span class="checkbox__label">Select All</span>
                 </label>
-                <%= form.submit "Run AI Match", class: "btn btn--primary btn--small" %>
+                <%= form.submit "Run AI Match", class: "btn btn--primary btn--small", data: { resume_match_submit: true }, disabled: true %>
               </div>
 
               <div class="job-show-table">
@@ -171,6 +170,8 @@
                     <% @resumes.each do |resume| %>
                       <% analysis = resume.analysis_json || {} %>
                       <% match_score = resume.match_score || analysis["match_percentage"] %>
+                      <% candidate_skills = Array(resume.skills).presence || Array(resume.parsed_data["skills"]) %>
+                      <% analyzed = analysis.present? && analysis["error"].blank? && (match_score.present? || analysis["summary"].present? || Array(analysis["matched_skills"]).any? || Array(analysis["missing_skills"]).any?) %>
                       <tr>
                         <td>
                           <label class="table-check">
@@ -179,12 +180,11 @@
                         </td>
                         <td>
                           <div><strong><%= resume.name.presence || "Candidate" %></strong></div>
-                          <div class="job-show-muted"><%= resume.created_at.to_date %></div>
                           <div class="job-show-muted"><%= resume.email.presence || "—" %></div>
                           <div class="job-show-muted"><%= resume.phone.presence || "—" %></div>
                         </td>
                         <td class="job-show-muted">
-                          <%= Array(resume.skills).first(6).join(", ").presence || "—" %>
+                          <%= candidate_skills.first(6).join(", ").presence || "—" %>
                         </td>
                         <td>
                           <% if match_score.present? %>
@@ -192,13 +192,16 @@
                           <% elsif analysis["error"].present? %>
                             <span class="tag tag--soft">Error</span>
                           <% else %>
-                            <span class="job-show-muted">—</span>
+                            <span class="tag tag--soft">Pending</span>
                           <% end %>
                         </td>
                         <td>
-                          <button type="button" class="btn btn--primary btn--small" data-ui-toggle="dialog" data-ui-target="#analysisDialog-<%= resume.id %>">
-                            View
-                          </button>
+                          <div class="resume-row-actions">
+                            <button type="button" class="btn btn--primary btn--small" data-ui-toggle="dialog" data-ui-target="#analysisDialog-<%= resume.id %>">
+                              <%= analyzed ? "View" : "Preview" %>
+                            </button>
+                            <%= link_to "Delete", job_resume_path(@job, resume), class: "btn btn--danger btn--small", data: { turbo_method: :delete, turbo_confirm: "Delete this resume?" } %>
+                          </div>
                         </td>
                       </tr>
                     <% end %>
@@ -260,25 +263,42 @@
 <% @resumes&.each do |resume| %>
   <% analysis = resume.analysis_json || {} %>
   <% match_score = resume.match_score || analysis["match_percentage"] %>
+  <% candidate_skills = Array(resume.skills).presence || Array(resume.parsed_data["skills"]) %>
+  <% candidate_education = Array(resume.education).presence || Array(resume.parsed_data["education"]) %>
+  <% analyzed = analysis.present? && analysis["error"].blank? && (match_score.present? || analysis["summary"].present? || Array(analysis["matched_skills"]).any? || Array(analysis["missing_skills"]).any?) %>
   <div class="dialog match-details-dialog" id="analysisDialog-<%= resume.id %>" aria-hidden="true">
-    <div class="dialog__content match-details-surface">
+    <div class="dialog__content match-details-surface" data-match-details-surface="true" data-candidate-name="<%= resume.name.presence || 'Candidate' %>">
       <div class="dialog__header match-details-header">
         <div>
           <h4 class="dialog__title">Match Details: <%= resume.name.presence || "Candidate" %></h4>
           <div class="match-details-meta">
             <span class="match-score"><%= match_score.present? ? "#{match_score}%" : "—" %></span>
-            <span class="match-fit">Experience Fit: <%= analysis["experience_fit"].presence || "—" %></span>
+            <span class="match-fit">Experience Fit: <%= analysis["experience_fit"].presence || (analyzed ? "—" : "Not analyzed yet") %></span>
           </div>
         </div>
         <button type="button" class="dialog__close match-details-close" data-ui-dismiss="dialog" aria-label="Close"></button>
       </div>
       <div class="dialog__body match-details-body">
+        <div class="match-section">
+          <h6>Candidate</h6>
+          <p><strong><%= resume.name.presence || "Candidate" %></strong></p>
+          <p><%= resume.email.presence || "—" %></p>
+          <p><%= resume.phone.presence || "—" %></p>
+        </div>
+        <div class="match-section">
+          <h6>Education</h6>
+          <p><%= candidate_education.presence&.join("<br>").to_s.html_safe.presence || "—" %></p>
+        </div>
         <% if analysis["error"].present? %>
           <div class="match-section">
             <h6>Analysis Error</h6>
             <p><%= analysis["error"] %></p>
           </div>
-        <% else %>
+        <% elsif analyzed %>
+          <div class="match-section">
+            <h6>Resume Skills</h6>
+            <p><%= candidate_skills.presence&.join(", ") || "—" %></p>
+          </div>
           <div class="match-section">
             <h6>Matched Skills</h6>
             <p><%= Array(analysis["matched_skills"]).presence&.join(", ") || "—" %></p>
@@ -291,9 +311,21 @@
             <h6>Summary</h6>
             <p><%= analysis["summary"].presence || "—" %></p>
           </div>
+        <% else %>
+          <div class="match-section">
+            <h6>Resume Skills</h6>
+            <p><%= candidate_skills.presence&.join(", ") || "—" %></p>
+          </div>
+          <div class="match-section">
+            <h6>AI Match Status</h6>
+            <p>Run AI Match for this resume to see matched skills, missing skills, experience fit, and summary.</p>
+          </div>
         <% end %>
       </div>
       <div class="dialog__footer match-details-footer">
+        <% if analyzed %>
+          <button type="button" class="btn btn--primary" data-download-match-pdf="true">Download PDF</button>
+        <% end %>
         <button type="button" class="btn btn--outline" data-ui-dismiss="dialog">Close</button>
       </div>
     </div>

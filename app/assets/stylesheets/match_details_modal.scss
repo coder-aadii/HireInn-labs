@@ -3,15 +3,21 @@
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-lg);
   color: var(--text-1);
+  max-height: min(88vh, 920px);
+  display: flex;
+  flex-direction: column;
 }
 
 .match-details-dialog .match-details-header,
 .match-details-dialog .match-details-footer {
   border: none;
+  flex-shrink: 0;
 }
 
 .match-details-dialog .match-details-body {
   padding: 0 1.5rem 1rem;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .match-details-dialog .dialog__title {
@@ -62,4 +68,31 @@
 
 .match-details-dialog .match-details-close {
   color: var(--text-2);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .match-details-surface,
+  .match-details-surface * {
+    visibility: visible;
+  }
+
+  .match-details-surface {
+    position: absolute;
+    inset: 0;
+    max-height: none;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    background: #ffffff;
+    color: #111111;
+  }
+
+  .match-details-footer,
+  .match-details-close {
+    display: none !important;
+  }
 }

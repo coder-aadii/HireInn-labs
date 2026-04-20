@@ -39,4 +39,13 @@ module MarkdownHelper
 
     sanitize(html_lines.join("\n"), tags: %w[h2 h3 h4 p strong ul li], attributes: [])
   end
+
+  def render_overview_markdown(text)
+    return "" if text.blank?
+
+    normalized = text.to_s.gsub("\r\n", "\n")
+    overview_only = normalized.split(/^### Key Responsibilities:\s*$/).first.to_s.strip
+
+    render_markdown(overview_only)
+  end
 end

@@ -44,6 +44,15 @@ module JobsHelper
     html.join("\n").html_safe
   end
 
+  def render_job_overview_markdown(text)
+    return "" if text.blank?
+
+    normalized = text.to_s.gsub("\\n", "\n").gsub("\\t", "\t").gsub("\r\n", "\n")
+    overview_only = normalized.split(/^### Key Responsibilities:\s*$/).first.to_s.strip
+
+    render_job_markdown(overview_only)
+  end
+
   private
 
   def format_inline(text)

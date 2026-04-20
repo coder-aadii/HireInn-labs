@@ -125,13 +125,42 @@ class JobsController < ApplicationController
   end
 
   def generate_ai_description!
+    if @job.title.blank?
+      @job.errors.add(:title, "is needed to generate a description.")
+    end
+
+    if @job.company_name.blank?
+      if current_user&.profile&.company_name.present?
+        @job.company_name = current_user.profile.company_name
+      else
+        @job.errors.add(:company_name, "is needed to generate a description.")
+      end
+    end
+
+    if @job.location.blank?
+      if current_user&.profile&.company_location.present?
+        @job.location = current_user.profile.company_location
+      else
+        @job.errors.add(:location, "is needed to generate a description.")
+      end
+    end
+
+    if @job.experience_min.nil?
+      @job.errors.add(:experience_min, "is needed to generate a description.")
+    end
+
+    if @job.expires_at.nil?
+      @job.errors.add(:expires_at, "is needed to generate a description.")
+    end
+
     generator = Ai::JobDescriptionGenerator.new
     result = generator.call(
       title: @job.title,
       company_name: @job.company_name,
       location: @job.location,
       employment_type: @job.employment_type,
-      experience_min: @job.experience_min
+      experience_min: @job.experience_min,
+      errors: @job.errors
     )
 
     @job.description = result[:description_markdown]

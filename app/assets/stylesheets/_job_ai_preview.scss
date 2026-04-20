@@ -1,6 +1,3 @@
-/* =========================================
-   JOB AI PREVIEW
-========================================= */
 
 .job-ai-preview-card {
   position: relative;
@@ -111,6 +108,15 @@
   color: var(--text-2);
 }
 
+.job-ai-preview-card .job-markdown p:has(> strong) {
+  margin-bottom: 0.45rem;
+  color: var(--text-1);
+}
+
+.job-ai-preview-card .job-markdown p strong {
+  color: var(--gold-strong);
+}
+
 .job-ai-preview-card .job-markdown ul,
 .job-ai-preview-card .job-markdown ol {
   padding-left: 1.2rem;
@@ -123,7 +129,11 @@
   padding-top: 0.35rem;
 }
 
-.job-ai-preview-card__error {
+.job-ai-preview-card__error,
+.job-title-input__error,
+.job-company_name-input__error,
+.job-experience_min-input__error,
+.job-expires_at-input__error {
   margin-top: 1rem;
   border-radius: 16px;
   padding: 0.95rem 1rem;
@@ -131,6 +141,7 @@
   border: 1px solid rgba(239, 122, 122, 0.25);
   color: #ffb4b4;
   line-height: 1.5;
+  font-size: small;
 }
 
 @keyframes job-ai-preview-spin {

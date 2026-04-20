@@ -1,6 +1,7 @@
 class JobResumesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_job
+  before_action :set_resume, only: :destroy
 
   def create
     files = Array(params.dig(:job_resume, :files))
@@ -50,7 +51,7 @@ class JobResumesController < ApplicationController
   end
 
   def match
-    scope = @job.job_resumes.where(user: current_user)
+    scope = @job.job_resumes.where(user: current_user).includes(:resume_attachment)
     ids = Array(params[:resume_ids]).map(&:to_i)
     scope = scope.where(id: ids) if ids.any? && params[:match_all].blank?
 
@@ -89,6 +90,7 @@ class JobResumesController < ApplicationController
       )
       matched += 1
     rescue Ai::ResumeAnalyzer::Error => e
+      Rails.logger.error("[JobResumesController#match] Resume ##{resume.id} failed: #{e.message}")
       resume.update(
         analysis_json: { error: e.message },
         matched_at: Time.current
@@ -100,6 +102,8 @@ class JobResumesController < ApplicationController
     if skipped.any?
       message << "Already matched: #{skipped.join(', ')}. See their details."
     end
+    failed = scope.count - matched - skipped.size
+    message << "Failed: #{failed} resume(s). Check the modal for error details." if failed.positive?
     notice_text = message.join(" ")
 
     if notice_text.present?
@@ -109,9 +113,20 @@ class JobResumesController < ApplicationController
     end
   end
 
+  def destroy
+    candidate_name = @resume.name.presence || @resume.email.presence || "Resume"
+    @resume.destroy
+
+    redirect_to job_path(@job, tab: "resume"), notice: "#{candidate_name} was removed."
+  end
+
   private
 
   def set_job
     @job = current_user.jobs.find_by!(slug: params[:job_id])
+  end
+
+  def set_resume
+    @resume = @job.job_resumes.find_by!(id: params[:id], user: current_user)
   end
 end
