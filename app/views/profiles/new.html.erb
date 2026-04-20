@@ -1,0 +1,35 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="profiles-page page-shell">
+  <div class="page-container profiles-page__container">
+    <header class="profiles-header">
+      <div>
+        <h1 class="profiles-header__title">Create Profile</h1>
+        <p class="profiles-header__subtitle">
+          Set up your HR identity so your workspace feels personal, polished, and ready for collaboration.
+        </p>
+      </div>
+      <div class="profiles-header__badge">Profile Setup</div>
+    </header>
+
+    <div class="profiles-layout">
+      <section class="panel panel--glass profile-card profile-card--form">
+        <div class="profile-card__header">
+          <h3>Your Details</h3>
+          <p>These details help personalize your dashboard and future profile surfaces.</p>
+        </div>
+
+        <%= render "profile_form", profile: @profile %>
+      </section>
+
+      <aside class="panel panel--glass profile-card profile-card--aside">
+        <h6 class="profile-card__eyebrow">Why Add A Profile</h6>
+        <ul class="profile-card__list">
+          <li>Create a more polished internal HR workspace.</li>
+          <li>Keep company and contact details in one place.</li>
+          <li>Prepare for future candidate-facing and team-facing profile surfaces.</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</div>

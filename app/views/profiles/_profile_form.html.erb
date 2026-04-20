@@ -1,0 +1,61 @@
+<%= form_with model: profile, url: profile_path, class: "profile-form" do |form| %>
+  <% if profile.errors.any? %>
+    <div class="notice notice--error profile-form__notice">
+      <strong>We couldn’t save the profile yet.</strong>
+      <span><%= profile.errors.full_messages.to_sentence %></span>
+    </div>
+  <% end %>
+
+  <div class="profile-form__grid">
+    <div class="profile-form__field">
+      <%= form.label :first_name, class: "label" %>
+      <%= form.text_field :first_name, class: "input", placeholder: "Aarav" %>
+    </div>
+
+    <div class="profile-form__field">
+      <%= form.label :last_name, class: "label" %>
+      <%= form.text_field :last_name, class: "input", placeholder: "Sharma" %>
+    </div>
+
+    <div class="profile-form__field">
+      <%= form.label :designation, class: "label" %>
+      <%= form.text_field :designation, class: "input", placeholder: "Senior HR Manager" %>
+    </div>
+
+    <div class="profile-form__field">
+      <%= form.label :phone, class: "label" %>
+      <%= form.telephone_field :phone, class: "input", placeholder: "+91 98XXXXXX10" %>
+    </div>
+
+    <div class="profile-form__field">
+      <%= form.label :company_name, class: "label" %>
+      <%= form.text_field :company_name, class: "input", placeholder: "HireInn Labs" %>
+    </div>
+
+    <div class="profile-form__field">
+      <%= form.label :company_location, class: "label" %>
+      <%= form.text_field :company_location, class: "input", placeholder: "Indore, India" %>
+    </div>
+
+    <div class="profile-form__field profile-form__field--full">
+      <%= form.label :avatar, "Profile Image", class: "label" %>
+      <div class="profile-upload">
+        <%= form.file_field :avatar, accept: "image/png,image/jpeg,image/jpg,image/webp,image/gif", class: "profile-upload__input" %>
+        <p class="profile-upload__hint">Upload a square or portrait image. PNG, JPG, WEBP, or GIF up to 5MB.</p>
+        <% if profile.avatar.attached? %>
+          <p class="profile-upload__current">Current file: <strong><%= profile.avatar.filename.to_s %></strong></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="profile-form__field profile-form__field--full">
+      <%= form.label :bio, class: "label" %>
+      <%= form.text_area :bio, rows: 6, class: "textarea", placeholder: "Write a short introduction for your internal hiring profile." %>
+    </div>
+  </div>
+
+  <div class="profile-form__actions">
+    <%= link_to "Back", profile.persisted? ? profile_path : dashboard_path, class: "btn btn--ghost" %>
+    <%= form.submit(profile.persisted? ? "Save Changes" : "Create Profile", class: "btn btn--primary") %>
+  </div>
+<% end %>

@@ -1,0 +1,93 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="profiles-page page-shell">
+  <div class="page-container profiles-page__container">
+    <header class="profiles-header profiles-header--show">
+      <div>
+        <h1 class="profiles-header__title">Profile</h1>
+        <p class="profiles-header__subtitle">
+          Your hiring identity, company details, and personal workspace information in one place.
+        </p>
+      </div>
+      <div class="profiles-header__actions">
+        <%= link_to "Edit Profile", edit_profile_path, class: "btn btn--primary" %>
+        <%= link_to "Update Password", edit_user_registration_path, class: "btn btn--ghost" %>
+      </div>
+    </header>
+
+    <div class="profiles-layout profiles-layout--show">
+      <section class="panel panel--glass profile-card profile-card--hero">
+        <div class="profile-hero">
+          <div class="profile-hero__avatar">
+            <% if @profile.avatar.attached? %>
+              <%= image_tag @profile.avatar, alt: "#{@profile.first_name} avatar" %>
+            <% else %>
+              <span><%= @profile.initials %></span>
+            <% end %>
+          </div>
+
+          <div class="profile-hero__copy">
+            <div class="profile-card__eyebrow">HR Profile</div>
+            <h2><%= [@profile.first_name, @profile.last_name].compact.join(" ").presence || "Unnamed Profile" %></h2>
+            <p class="profile-hero__meta">
+              <%= [@profile.designation.presence, @profile.company_name.presence, @profile.company_location.presence].compact.join(" · ").presence || "Add your professional details to complete this card." %>
+            </p>
+            <p class="profile-hero__bio">
+              <%= @profile.bio.presence || "No bio added yet. Add a short professional summary to make this profile feel complete." %>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel panel--glass profile-card profile-card--aside">
+        <h6 class="profile-card__eyebrow">Contact</h6>
+        <div class="profile-card__stat">
+          <span>Email</span>
+          <strong><%= current_user.email %></strong>
+        </div>
+        <div class="profile-card__stat">
+          <span>Phone</span>
+          <strong><%= @profile.phone.presence || "Not set" %></strong>
+        </div>
+        <div class="profile-card__stat">
+          <span>Designation</span>
+          <strong><%= @profile.designation.presence || "Not set" %></strong>
+        </div>
+      </aside>
+
+      <section class="panel panel--glass profile-card profile-card--details">
+        <div class="profile-card__header">
+          <h3>Profile Details</h3>
+          <p>Structured details used to personalize the dashboard and future hiring flows.</p>
+        </div>
+
+        <div class="profile-details-grid">
+          <div class="profile-details-item">
+            <span class="profile-details-item__label">First Name</span>
+            <strong><%= @profile.first_name %></strong>
+          </div>
+          <div class="profile-details-item">
+            <span class="profile-details-item__label">Last Name</span>
+            <strong><%= @profile.last_name.presence || "Not set" %></strong>
+          </div>
+          <div class="profile-details-item">
+            <span class="profile-details-item__label">Company</span>
+            <strong><%= @profile.company_name.presence || "Not set" %></strong>
+          </div>
+          <div class="profile-details-item">
+            <span class="profile-details-item__label">Location</span>
+            <strong><%= @profile.company_location.presence || "Not set" %></strong>
+          </div>
+          <div class="profile-details-item">
+            <span class="profile-details-item__label">Profile Image</span>
+            <strong><%= @profile.avatar.attached? ? @profile.avatar.filename.to_s : "Not uploaded" %></strong>
+          </div>
+          <div class="profile-details-item">
+            <span class="profile-details-item__label">Account Role</span>
+            <strong><%= current_user.role.to_s.titleize %></strong>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
