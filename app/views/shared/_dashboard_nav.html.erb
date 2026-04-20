@@ -1,6 +1,6 @@
 <nav class="dashboard-nav">
   <div class="page-container dashboard-nav__inner">
-    <%= link_to home_index_path, class: "dashboard-nav__brand" do %>
+    <%= link_to home_path, class: "dashboard-nav__brand" do %>
       <%= image_tag "hireinn_logo.png", alt: "HireInn Labs logo", class: "dashboard-nav__logo" %>
       <span class="dashboard-nav__name">HireInn Labs</span>
       <span class="dashboard-nav__role"><%= current_user.admin? ? "Admin" : "HR" %></span>
@@ -9,7 +9,7 @@
     <div class="dashboard-nav__links">
       <%= link_to "Dashboard", dashboard_path, class: "dashboard-nav__link #{'is-active' if current_page?(dashboard_path)}" %>
       <%= link_to "Jobs", jobs_path, class: "dashboard-nav__link #{'is-active' if controller_name == 'jobs'}" %>
-      <%= link_to "Candidates", "#", class: "dashboard-nav__link" %>
+      <%= link_to "Candidates", candidates_path, class: "dashboard-nav__link #{'is-active' if controller_name == 'candidates'}" %>
       <%= link_to "Applications", applications_path, class: "dashboard-nav__link #{'is-active' if controller_name == 'applications'}" %>
       <%= link_to "Interviews", "#", class: "dashboard-nav__link" %>
     </div>
@@ -23,6 +23,10 @@
           method: :delete,
           form_class: "nav-inline-form",
           class: "btn btn--outline" %>
+      
+      <%= link_to profile_or_new_path, class: "btn btn--ghost", style:"height: 37px;" do %>
+        <%= image_tag "https://img.icons8.com/?size=30&id=m1OGQcgz4XkI&format=png&color=000000", alt: "User Avatar" %>
+      <% end %>
     </div>
   </div>
 </nav>

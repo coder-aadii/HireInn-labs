@@ -1,0 +1,116 @@
+<%= render "shared/dashboard_nav" %>
+
+<div class="candidates-page page-shell">
+  <div class="page-container candidates-page__container">
+    <header class="candidates-header">
+      <div>
+        <h1 class="candidates-header__title">Candidates</h1>
+        <p class="candidates-header__subtitle">
+          Review everyone who has entered your pipeline across published roles.
+        </p>
+      </div>
+      <div class="candidates-header__actions">
+        <%= link_to "Review Applications", applications_path, class: "btn btn--outline" %>
+        <%= link_to "Create Job", new_job_path, class: "btn btn--primary" %>
+      </div>
+    </header>
+
+    <section class="candidates-metrics">
+      <div class="candidates-metric">
+        <div class="candidates-metric__label">Total Candidates</div>
+        <div class="candidates-metric__value"><%= @candidate_stats[:total] %></div>
+        <div class="candidates-metric__hint">People in your hiring pipeline</div>
+      </div>
+      <div class="candidates-metric">
+        <div class="candidates-metric__label">New This Week</div>
+        <div class="candidates-metric__value"><%= @candidate_stats[:new_this_week] %></div>
+        <div class="candidates-metric__hint">Fresh inbound interest</div>
+      </div>
+      <div class="candidates-metric">
+        <div class="candidates-metric__label">Repeat Applicants</div>
+        <div class="candidates-metric__value"><%= @candidate_stats[:active_conversations] %></div>
+        <div class="candidates-metric__hint">Candidates across multiple roles</div>
+      </div>
+      <div class="candidates-metric">
+        <div class="candidates-metric__label">Resumes Attached</div>
+        <div class="candidates-metric__value"><%= @candidate_stats[:resumes_attached] %></div>
+        <div class="candidates-metric__hint">Ready for deeper review</div>
+      </div>
+    </section>
+
+    <% if @candidate_cards.any? %>
+      <section class="candidates-grid">
+        <% @candidate_cards.each do |entry| %>
+          <% candidate = entry[:candidate] %>
+          <% latest_application = entry[:latest_application] %>
+          <article class="panel panel--glass candidate-card">
+            <div class="candidate-card__header">
+              <div>
+                <p class="candidate-card__eyebrow">Candidate profile</p>
+                <h3 class="candidate-card__title"><%= candidate.name %></h3>
+                <p class="candidate-card__meta"><%= candidate.email %></p>
+              </div>
+              <% if entry[:latest_status].present? %>
+                <span class="tag tag--gold"><%= entry[:latest_status].titleize %></span>
+              <% end %>
+            </div>
+
+            <div class="candidate-card__body">
+              <div class="candidate-card__stats">
+                <div class="candidate-stat">
+                  <span class="candidate-stat__label">Applications</span>
+                  <strong><%= entry[:applications_count] %></strong>
+                </div>
+                <div class="candidate-stat">
+                  <span class="candidate-stat__label">Roles</span>
+                  <strong><%= entry[:active_jobs_count] %></strong>
+                </div>
+                <div class="candidate-stat">
+                  <span class="candidate-stat__label">Phone</span>
+                  <strong><%= candidate.phone.presence || "—" %></strong>
+                </div>
+              </div>
+
+              <% if entry[:latest_job].present? %>
+                <div class="candidate-card__highlight">
+                  <span class="candidate-card__highlight-label">Latest role</span>
+                  <strong><%= entry[:latest_job].title %></strong>
+                  <span class="candidate-card__highlight-meta">
+                    Applied <%= time_ago_in_words(entry[:last_applied_at]) %> ago
+                  </span>
+                </div>
+              <% end %>
+
+              <div class="candidate-card__timeline">
+                <% entry[:applications].first(3).each do |application| %>
+                  <div class="candidate-card__timeline-item">
+                    <strong><%= application.job.title %></strong>
+                    <span><%= application.created_at.to_date %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="candidate-card__actions">
+              <% if latest_application.present? %>
+                <%= link_to "Open Latest Application", application_path(latest_application), class: "btn btn--outline" %>
+                <% if latest_application.resume.attached? %>
+                  <%= link_to "Download Resume", rails_blob_path(latest_application.resume, disposition: "attachment"), class: "btn btn--primary" %>
+                <% end %>
+              <% end %>
+            </div>
+          </article>
+        <% end %>
+      </section>
+    <% else %>
+      <section class="panel panel--glass candidates-empty">
+        <h3>No candidates yet</h3>
+        <p>Your candidate pipeline will populate here once people start applying to your roles.</p>
+        <div class="candidates-empty__actions">
+          <%= link_to "Create a Job", new_job_path, class: "btn btn--primary" %>
+          <%= link_to "View Career Page", careers_path, class: "btn btn--outline" %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+</div>
