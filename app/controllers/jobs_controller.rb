@@ -27,7 +27,7 @@ class JobsController < ApplicationController
           render turbo_stream: [
             turbo_stream.replace("flash", partial: "shared/flash"),
             turbo_stream.replace("ai_notice", partial: "jobs/ai_notice"),
-            turbo_stream.replace("job_ai_preview", partial: "jobs/ai_preview", locals: { job: @job }),
+            turbo_stream.replace("job_ai_preview", partial: "jobs/ai_preview_frame", locals: { job: @job }),
             turbo_stream.replace("job_form", partial: "jobs/form", locals: { job: @job })
           ], status: status
         end

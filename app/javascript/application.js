@@ -2,30 +2,50 @@ import "@hotwired/turbo-rails"
 import "controllers"
 import { initializePublicCursor, teardownPublicCursor } from "cursor"
 
-document.addEventListener("submit", (event) => {
-  const form = event.target
-  if (!(form instanceof HTMLFormElement)) return
-  const submitter = event.submitter
-  if (submitter && submitter.name === "generate_ai") {
-    const previewFrame = document.getElementById("job_ai_preview")
-    if (previewFrame) previewFrame.classList.add("is-loading")
-    const previewCard = document.querySelector(".ai-preview")
-    if (previewCard) previewCard.classList.add("is-loading")
-    submitter.disabled = true
-  }
+let aiPreviewLoadingStart = null
+
+const isGenerateAiRequest = (event) => {
+  const form = event.target instanceof HTMLFormElement ? event.target : null
+  if (!form || !form.matches(".job-entry-form")) return false
+
+  const body = event.detail?.fetchOptions?.body
+  if (body instanceof FormData) return body.has("generate_ai")
+  if (body instanceof URLSearchParams) return body.has("generate_ai")
+  if (typeof body === "string") return body.includes("generate_ai")
+
+  return false
+}
+
+const clearAiPreviewLoader = () => {
+  if (aiPreviewLoadingStart === null) return
+
+  const elapsed = Date.now() - aiPreviewLoadingStart
+  const delay = Math.max(0, 400 - elapsed)
+
+  window.setTimeout(() => {
+    document.getElementById("job_ai_preview_wrapper")?.classList.remove("is-loading")
+    aiPreviewLoadingStart = null
+  }, delay)
+}
+
+document.addEventListener("turbo:before-fetch-request", (event) => {
+  if (!isGenerateAiRequest(event)) return
+
+  aiPreviewLoadingStart = Date.now()
+  const wrapper = document.getElementById("job_ai_preview_wrapper")
+  wrapper?.classList.add("is-loading")
+  wrapper?.scrollIntoView({ behavior: "smooth", block: "start" })
+})
+
+document.addEventListener("turbo:frame-load", (event) => {
+  if (event.target.id !== "job_ai_preview") return
+  clearAiPreviewLoader()
 })
 
 document.addEventListener("turbo:submit-end", (event) => {
   const form = event.target
-  if (!(form instanceof HTMLFormElement)) return
-  const previewFrame = document.getElementById("job_ai_preview")
-  if (previewFrame) previewFrame.classList.remove("is-loading")
-  const previewCard = document.querySelector(".ai-preview")
-  if (previewCard) previewCard.classList.remove("is-loading")
-  const submitter = event.detail.formSubmission?.submitter
-  if (submitter && submitter.name === "generate_ai") {
-    submitter.disabled = false
-  }
+  if (!(form instanceof HTMLFormElement) || !form.matches(".job-entry-form")) return
+  clearAiPreviewLoader()
 })
 
 document.addEventListener("turbo:load", () => {

@@ -1,8 +1,21 @@
 
-.job-ai-preview-card {
+.ai-preview-wrapper {
   position: relative;
-  height: 100%;
-  min-height: 100%;
+}
+
+#job_ai_preview_wrapper {
+  display: block;
+}
+
+#job_ai_preview_wrapper.is-loading #job_ai_preview {
+  display: none;
+}
+
+#job_ai_preview {
+  display: block;
+}
+
+.job-ai-preview-card {
   background:
     radial-gradient(circle at top left, rgba(212, 175, 55, 0.1), transparent 24%),
     linear-gradient(180deg, rgba(16, 21, 32, 0.98), rgba(11, 15, 23, 0.98));
@@ -13,50 +26,102 @@
   overflow: hidden;
 }
 
-.job-ai-preview-card .ai-preview-overlay {
-  position: absolute;
-  inset: 0;
+.job-ai-preview-loader {
+  display: none;
   background: rgba(8, 11, 17, 0.84);
   backdrop-filter: blur(3px);
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.42);
 }
 
-.job-ai-preview-card.is-loading .ai-preview-overlay {
-  opacity: 1;
-  pointer-events: auto;
+#job_ai_preview_wrapper.is-loading #job_ai_preview_loader {
+  display: flex;
 }
 
-.job-ai-preview-card__spinner {
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.16);
-  border-top-color: var(--gold);
-  animation: job-ai-preview-spin 0.85s linear infinite;
-}
-
-.job-ai-preview-card__loading-text {
+.job-ai-preview-loader__text {
   color: var(--text-1);
   font-size: 0.95rem;
+  text-align: left;
 }
 
-.job-ai-preview-card__sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+.job-ai-preview-loader__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.job-ai-preview-skeleton__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.job-ai-preview-skeleton__title {
+  width: 8.5rem;
+  height: 1.25rem;
+  border-radius: 999px;
+}
+
+.job-ai-preview-skeleton__badge {
+  width: 2rem;
+  height: 1.15rem;
+  border-radius: 999px;
+}
+
+.job-ai-preview-skeleton__meta,
+.job-ai-preview-skeleton__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.job-ai-preview-skeleton__heading {
+  width: 7.5rem;
+  height: 1rem;
+  border-radius: 999px;
+}
+
+.job-ai-preview-skeleton__line {
+  width: 100%;
+  height: 0.92rem;
+  border-radius: 999px;
+}
+
+.job-ai-preview-skeleton__line--medium {
+  width: 78%;
+}
+
+.job-ai-preview-skeleton__line--short {
+  width: 62%;
+}
+
+.shimmer-block {
+  position: relative;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.shimmer-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.08) 35%,
+    rgba(212, 175, 55, 0.28) 50%,
+    rgba(212, 175, 55, 0.08) 65%,
+    transparent 100%
+  );
+  animation: job-ai-preview-skeleton-shimmer 1.45s ease-in-out infinite;
 }
 
 .job-ai-preview-card .ai-preview-header {
@@ -144,9 +209,9 @@
   font-size: small;
 }
 
-@keyframes job-ai-preview-spin {
+@keyframes job-ai-preview-skeleton-shimmer {
   to {
-    transform: rotate(360deg);
+    transform: translateX(100%);
   }
 }
 
@@ -155,5 +220,10 @@
     min-height: auto;
     border-radius: 20px;
     padding: 1.25rem;
+  }
+
+  .job-ai-preview-loader {
+    padding: 1.25rem;
+    border-radius: 20px;
   }
 }

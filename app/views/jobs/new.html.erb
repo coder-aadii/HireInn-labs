@@ -18,9 +18,13 @@
         <% end %>
       </div>
       <div class="job-form-layout__sidebar">
-        <%= turbo_frame_tag "job_ai_preview" do %>
-          <%= render "ai_preview", job: @job %>
-        <% end %>
+        <div id="job_ai_preview_wrapper" class="ai-preview-wrapper">
+          <div id="job_ai_preview_loader" class="job-ai-preview-loader" aria-hidden="true">
+            <%= render "ai_preview_loader" %>
+          </div>
+
+          <%= render "ai_preview_frame", job: @job %>
+        </div>
       </div>
     </div>
   </div>
