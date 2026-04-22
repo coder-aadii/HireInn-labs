@@ -52,11 +52,12 @@
           </div>
           <div class="careers-apply__field">
             <%= form.label :email, class: "label" %>
-            <%= form.email_field :email, class: "input" %>
+            <%= form.email_field :email, class: "input", required: true, placeholder: "e.g. name@example.com", pattern: '[^@\s]+@[^@\s]+\.[^@\s]+', title: "Please enter a valid email address" %>
           </div>
           <div class="careers-apply__field">
             <%= form.label :phone, class: "label" %>
-            <%= form.telephone_field :phone, class: "input" %>
+            <%= form.telephone_field :phone, id: "phone_input", class: "input" %>
+            <%= form.hidden_field :full_phone_number, id: "full_phone" %>
           </div>
           <div class="careers-apply__field">
             <%= form.label :resume, class: "label" %>

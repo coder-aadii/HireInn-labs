@@ -166,6 +166,15 @@
   color: #15151f;
 }
 
+.careers-page .iti,
+.careers-page .iti--inline-dropdown {
+  width: 100%;
+}
+
+.careers-page .iti input.iti__tel-input {
+  width: 100%;
+}
+
 .careers-apply__form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
