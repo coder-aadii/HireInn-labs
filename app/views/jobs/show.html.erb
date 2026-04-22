@@ -19,6 +19,7 @@
             Publish
           </button>
         <% end %>
+        <%= link_to "See Applications", applications_path(job_id: @job.id), class: "btn btn--outline" %>
         <%= link_to "Edit", edit_job_path(@job), class: "btn btn--outline" %>
         <%= link_to "Delete", job_path(@job), data: { turbo_method: :delete, turbo_confirm: "Delete this job?" }, class: "btn btn--danger" %>
       </div>
