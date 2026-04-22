@@ -1,0 +1,60 @@
+<% girl_frames = (0..96).map { |index| "girl_images/girl_image_0#{index}.webp" } %>
+<% icon_svgs = {
+  "file" => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/><path d="M9 13h6M9 17h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/></svg>',
+  "chat" => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 15a3 3 0 0 1-3 3H9l-5 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg>',
+  "chart" => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/><path d="M7 16v-6M12 16V6M17 16v-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/></svg>',
+  "people" => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 19v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/><circle cx="10" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 19v-1a4 4 0 0 0-3-3.87" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/><path d="M14 5.13a3 3 0 0 1 0 5.74" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg>',
+  "phone" => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 3.18 2 2 0 0 1 4.11 1h2a2 2 0 0 1 2 1.72l.34 2.71a2 2 0 0 1-.57 1.7L6.7 8.3a16 16 0 0 0 9 9l1.17-1.18a2 2 0 0 1 1.7-.57l2.71.34A2 2 0 0 1 22 16.92z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg>',
+  "play" => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"/></svg>'
+}.freeze %>
+<% left_features = [
+  { title: "Smart JD Creator", accent: "scroll-card--violet", icon: "file" },
+  { title: "AI Interviewer", accent: "scroll-card--peach", icon: "chat" },
+  { title: "Hiring Analytics", accent: "scroll-card--rose", icon: "chart" }
+] %>
+<% right_features = [
+  { title: "Resume Analyzer", accent: "scroll-card--sky", icon: "people" },
+  { title: "Voice Screening", accent: "scroll-card--mint", icon: "phone" },
+  { title: "Team Integration", accent: "scroll-card--lavender", icon: "play" }
+] %>
+
+<section
+  class="landing-scroll-sequence"
+  data-scroll-sequence="true"
+  data-scroll-frames="<%= girl_frames.map { |frame| asset_path(frame) }.to_json %>"
+>
+  <div class="landing-scroll-sequence__sticky">
+    <div class="landing-scroll-sequence__inner">
+      <div class="landing-scroll-sequence__stage">
+        <div class="landing-scroll-sequence__rail landing-scroll-sequence__rail--left" aria-hidden="true">
+          <% left_features.each do |feature| %>
+            <article class="scroll-card <%= feature[:accent] %>">
+              <span class="scroll-card__icon"><%= raw(icon_svgs.fetch(feature[:icon])) %></span>
+              <strong><%= feature[:title] %></strong>
+            </article>
+          <% end %>
+        </div>
+
+        <div class="landing-scroll-sequence__visual">
+          <div class="landing-scroll-sequence__glow landing-scroll-sequence__glow--left"></div>
+          <div class="landing-scroll-sequence__glow landing-scroll-sequence__glow--right"></div>
+          <img
+            src="<%= asset_path(girl_frames.first) %>"
+            alt="Animated candidate presentation"
+            class="landing-scroll-sequence__image"
+            data-scroll-sequence-image="true"
+          >
+        </div>
+
+        <div class="landing-scroll-sequence__rail landing-scroll-sequence__rail--right" aria-hidden="true">
+          <% right_features.each do |feature| %>
+            <article class="scroll-card <%= feature[:accent] %>">
+              <span class="scroll-card__icon"><%= raw(icon_svgs.fetch(feature[:icon])) %></span>
+              <strong><%= feature[:title] %></strong>
+            </article>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

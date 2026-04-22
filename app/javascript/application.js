@@ -3,6 +3,146 @@ import "controllers"
 import { initializePublicCursor, teardownPublicCursor } from "cursor"
 
 let aiPreviewLoadingStart = null
+const flashDismissTimers = new WeakMap()
+const scrollSequenceHandlers = new WeakMap()
+
+const dismissFlashNotice = (notice) => {
+  if (!(notice instanceof HTMLElement)) return
+  const existingTimer = flashDismissTimers.get(notice)
+  if (existingTimer) {
+    window.clearTimeout(existingTimer)
+    flashDismissTimers.delete(notice)
+  }
+  notice.remove()
+}
+
+const initializeFlashNotices = () => {
+  document.querySelectorAll("#flash .notice").forEach((notice) => {
+    if (flashDismissTimers.has(notice)) return
+
+    const timer = window.setTimeout(() => {
+      dismissFlashNotice(notice)
+    }, 5000)
+
+    flashDismissTimers.set(notice, timer)
+  })
+}
+
+const teardownScrollSequences = () => {
+  document.querySelectorAll("[data-scroll-sequence='true']").forEach((section) => {
+    const teardown = scrollSequenceHandlers.get(section)
+    if (typeof teardown === "function") teardown()
+    scrollSequenceHandlers.delete(section)
+  })
+}
+
+const initializeScrollSequences = () => {
+  teardownScrollSequences()
+
+  document.querySelectorAll("[data-scroll-sequence='true']").forEach((section) => {
+    if (!(section instanceof HTMLElement)) return
+
+    const image = section.querySelector("[data-scroll-sequence-image='true']")
+    if (!(image instanceof HTMLImageElement)) return
+    const leftRail = section.querySelector(".landing-scroll-sequence__rail--left")
+    const rightRail = section.querySelector(".landing-scroll-sequence__rail--right")
+
+    let frames = []
+
+    try {
+      frames = JSON.parse(section.dataset.scrollFrames || "[]")
+    } catch (_error) {
+      frames = []
+    }
+
+    if (!frames.length) return
+
+    const preloadCount = Math.min(frames.length, 12)
+    frames.slice(0, preloadCount).forEach((src) => {
+      const preloadImage = new Image()
+      preloadImage.src = src
+    })
+
+    let frameIndex = -1
+
+    const updateFrame = () => {
+      if (window.innerWidth <= 768) {
+        if (frameIndex !== 0) {
+          image.src = frames[0]
+          frameIndex = 0
+        }
+        image.style.transform = "scale(1)"
+        if (leftRail instanceof HTMLElement) leftRail.style.transform = "translateY(0)"
+        if (rightRail instanceof HTMLElement) rightRail.style.transform = "translateY(0)"
+        return
+      }
+
+      const rect = section.getBoundingClientRect()
+      const maxTravel = Math.max(section.offsetHeight - window.innerHeight, 1)
+      const pixelsScrolled = Math.min(Math.max(-rect.top, 0), maxTravel)
+      const progress = pixelsScrolled / maxTravel
+
+      const nextFrameIndex = Math.min(
+        frames.length - 1,
+        Math.round(progress * (frames.length - 1))
+      )
+
+      if (nextFrameIndex !== frameIndex) {
+        image.src = frames[nextFrameIndex]
+        frameIndex = nextFrameIndex
+      }
+
+      // const scale = 1 + progress * 0.6
+      // image.style.transform = `scale(${scale})`
+
+      // 🔥 Better easing (smooth start + smooth end)
+      const easeInOut = (t) =>
+        t < 0.5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2
+
+      const eased = easeInOut(progress)
+
+      // 🔥 Controlled zoom
+      const scale = 1.2 + eased * 0.2
+
+      // 🔥 Subtle horizontal drift (adds realism)
+      const driftX = (progress - 0.5) * 40
+
+      image.style.transform = `scale(${scale}) translateX(${driftX}px)`
+
+      const translateY = progress * 80
+
+      // 🔥 Parallax depth (different speeds)
+      if (leftRail instanceof HTMLElement) {
+        leftRail.style.transform = `translateY(${translateY * 0.5}px)`
+      }
+
+      if (rightRail instanceof HTMLElement) {
+        rightRail.style.transform = `translateY(${translateY * 0.7}px)`
+      }
+    }
+
+    let ticking = false
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      window.requestAnimationFrame(() => {
+        updateFrame()
+        ticking = false
+      })
+    }
+
+    updateFrame()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+
+    scrollSequenceHandlers.set(section, () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    })
+  })
+}
 
 const isGenerateAiRequest = (event) => {
   const form = event.target instanceof HTMLFormElement ? event.target : null
@@ -49,7 +189,9 @@ document.addEventListener("turbo:submit-end", (event) => {
 })
 
 document.addEventListener("turbo:load", () => {
+  initializeFlashNotices()
   initializePublicCursor()
+  initializeScrollSequences()
 
   const reveals = document.querySelectorAll(".reveal")
   if (!reveals.length) return
@@ -69,6 +211,7 @@ document.addEventListener("turbo:load", () => {
 })
 
 document.addEventListener("turbo:before-cache", () => {
+  teardownScrollSequences()
   teardownPublicCursor()
 })
 
@@ -187,7 +330,7 @@ document.addEventListener("click", (event) => {
   if (noticeDismiss) {
     event.preventDefault()
     const notice = noticeDismiss.closest(".notice")
-    if (notice) notice.remove()
+    dismissFlashNotice(notice)
   }
 })
 
@@ -272,3 +415,31 @@ document.addEventListener("turbo:load", () => {
   updateResumeFileLabels()
   updateResumeMatchState()
 })
+
+let phoneInputInstance = null
+
+const initializePhoneInput = () => {
+  const input = document.querySelector("#phone_input")
+  const hiddenInput = document.querySelector("#full_phone")
+  if (!(input instanceof HTMLInputElement) || !(hiddenInput instanceof HTMLInputElement)) return
+  if (typeof window.intlTelInput !== "function") return
+
+  if (phoneInputInstance?.destroy) {
+    phoneInputInstance.destroy()
+    phoneInputInstance = null
+  }
+
+  phoneInputInstance = window.intlTelInput(input, {
+    initialCountry: "in"
+  })
+
+  const syncFullPhone = () => {
+    if (!phoneInputInstance) return
+    hiddenInput.value = phoneInputInstance.getNumber()
+  }
+
+  input.addEventListener("blur", syncFullPhone)
+  input.form?.addEventListener("submit", syncFullPhone)
+}
+
+document.addEventListener("turbo:load", initializePhoneInput)
