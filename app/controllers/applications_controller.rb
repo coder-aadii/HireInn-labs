@@ -2,11 +2,30 @@ class ApplicationsController < ApplicationController
   before_action :authenticate_user!, except: :create
 
   def index
-    @applications = Application
-      .joins(:job)
+    base_scope = Application
+      .joins(:job, :candidate)
       .where(jobs: { user_id: current_user.id })
       .includes(:candidate, :job, resume_attachment: :blob)
-      .order(created_at: :desc)
+    @jobs = Job
+      .where(user_id: current_user.id)
+      .order(:title)
+    @search_query = params[:q].to_s.strip
+    @selected_job_id = params[:job_id].to_s.strip
+
+    @applications = base_scope
+    if @search_query.present?
+      search_term = "%#{ActiveRecord::Base.sanitize_sql_like(@search_query)}%"
+      @applications = @applications.where(
+        "candidates.name ILIKE :term OR candidates.email ILIKE :term OR jobs.title ILIKE :term",
+        term: search_term
+      ).references(:candidate, :job)
+    end
+
+    if @selected_job_id.present?
+      @applications = @applications.where(job_id: @selected_job_id)
+    end
+
+    @applications = @applications.order(created_at: :desc)
   end
 
   def show

@@ -9,6 +9,33 @@
       </div>
     </header>
 
+    <section class="panel panel--glass applications-filters">
+      <%= form_with url: applications_path, method: :get, local: true, class: "applications-filters__form" do |form| %>
+        <div class="applications-filters__field">
+          <%= form.label :q, "Search", class: "label" %>
+          <%= form.search_field :q,
+                value: @search_query,
+                placeholder: "Search by candidate, email, or job title",
+                class: "input" %>
+        </div>
+
+        <div class="applications-filters__field">
+          <%= form.label :job_id, "Job", class: "label" %>
+          <%= form.select :job_id,
+                options_from_collection_for_select(@jobs, :id, :title, @selected_job_id),
+                { include_blank: "All jobs" },
+                class: "select" %>
+        </div>
+
+        <div class="applications-filters__actions">
+          <%= form.submit "Apply", class: "btn btn--primary" %>
+          <% if @search_query.present? || @selected_job_id.present? %>
+            <%= link_to "Clear", applications_path, class: "btn btn--outline" %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+
     <% if @applications.any? %>
       <div class="applications-grid">
         <% @applications.each do |application| %>
@@ -34,8 +61,10 @@
       </div>
     <% else %>
       <div class="panel panel--glass applications-empty">
-        <h3>No applications yet</h3>
-        <p>Once candidates apply, they’ll appear here.</p>
+        <h3><%= (@search_query.present? || @selected_job_id.present?) ? "No matching applications" : "No applications yet" %></h3>
+        <p>
+          <%= (@search_query.present? || @selected_job_id.present?) ? "Try a different search term or switch the job filter." : "Once candidates apply, they’ll appear here." %>
+        </p>
       </div>
     <% end %>
   </div>
