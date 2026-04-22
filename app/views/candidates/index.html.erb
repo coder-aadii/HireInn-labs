@@ -43,6 +43,9 @@
         <% @candidate_cards.each do |entry| %>
           <% candidate = entry[:candidate] %>
           <% latest_application = entry[:latest_application] %>
+          <% role_titles = entry[:applications].map { |application| application.job.title }.uniq %>
+          <% visible_role_titles = role_titles.first(3) %>
+          <% remaining_roles_count = [role_titles.size - visible_role_titles.size, 0].max %>
           <article class="panel panel--glass candidate-card">
             <div class="candidate-card__header">
               <div>
@@ -55,39 +58,53 @@
               <% end %>
             </div>
 
-            <div class="candidate-card__body">
+            <div class="candidate-card__content">
               <div class="candidate-card__stats">
                 <div class="candidate-stat">
                   <span class="candidate-stat__label">Applications</span>
-                  <strong><%= entry[:applications_count] %></strong>
+                  <strong class="candidate-stat__value"><%= entry[:applications_count] %></strong>
                 </div>
                 <div class="candidate-stat">
                   <span class="candidate-stat__label">Roles</span>
-                  <strong><%= entry[:active_jobs_count] %></strong>
+                  <strong class="candidate-stat__value"><%= entry[:active_jobs_count] %></strong>
                 </div>
-                <div class="candidate-stat">
+                <div class="candidate-stat candidate-stat--phone">
                   <span class="candidate-stat__label">Phone</span>
-                  <strong><%= candidate.phone.presence || "—" %></strong>
+                  <strong class="candidate-stat__value candidate-stat__value--phone" title="<%= candidate.phone.presence || '—' %>"><%= candidate.phone.presence || "—" %></strong>
                 </div>
               </div>
 
-              <% if entry[:latest_job].present? %>
-                <div class="candidate-card__highlight">
-                  <span class="candidate-card__highlight-label">Latest role</span>
-                  <strong><%= entry[:latest_job].title %></strong>
-                  <span class="candidate-card__highlight-meta">
-                    Applied <%= time_ago_in_words(entry[:last_applied_at]) %> ago
-                  </span>
-                </div>
-              <% end %>
-
-              <div class="candidate-card__timeline">
-                <% entry[:applications].first(3).each do |application| %>
-                  <div class="candidate-card__timeline-item">
-                    <strong><%= application.job.title %></strong>
-                    <span><%= application.created_at.to_date %></span>
-                  </div>
+              <div class="candidate-card__latest">
+                <% if entry[:latest_job].present? %>
+                  <span class="candidate-card__latest-label">Latest role</span>
+                  <p class="candidate-card__latest-line">
+                    <strong><%= entry[:latest_job].title %></strong>
+                    <span class="candidate-card__latest-separator">&bull;</span>
+                    <span class="candidate-card__latest-meta">Applied <%= time_ago_in_words(entry[:last_applied_at]) %> ago</span>
+                  </p>
+                <% else %>
+                  <span class="candidate-card__latest-label">Latest role</span>
+                  <p class="candidate-card__latest-line candidate-card__latest-line--empty">
+                    <strong>No recent role</strong>
+                    <span class="candidate-card__latest-separator">&bull;</span>
+                    <span class="candidate-card__latest-meta">No applications yet</span>
+                  </p>
                 <% end %>
+              </div>
+
+              <div class="candidate-card__roles">
+                <span class="candidate-card__roles-label">Roles</span>
+                <div class="candidate-roles">
+                  <% visible_role_titles.each do |role_title| %>
+                    <span class="role-chip"><%= role_title %></span>
+                  <% end %>
+                  <% if remaining_roles_count.positive? %>
+                    <span class="role-chip more">+<%= remaining_roles_count %> more</span>
+                  <% end %>
+                  <% if role_titles.blank? %>
+                    <span class="role-chip">No roles yet</span>
+                  <% end %>
+                </div>
               </div>
             </div>
 

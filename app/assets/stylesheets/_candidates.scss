@@ -38,14 +38,14 @@
 }
 
 .candidates-metric {
-  background: rgba(14, 19, 28, 0.75);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
+  background: rgba(14, 19, 28, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
 }
 
 .candidates-metric__label {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-3);
@@ -54,117 +54,220 @@
 .candidates-metric__value {
   font-size: 2rem;
   font-weight: 700;
-  margin: 0.35rem 0;
+  margin: 0.3rem 0 0.2rem;
   color: var(--text-1);
 }
 
 .candidates-metric__hint {
   color: var(--text-3);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
 }
 
 .candidates-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-5);
+  gap: 1.15rem;
 }
 
 .candidate-card {
-  padding: var(--space-4);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
+  height: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(14, 18, 28, 0.96);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
 }
 
 .candidate-card__header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
 }
 
 .candidate-card__eyebrow {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.25rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   color: var(--text-3);
 }
 
 .candidate-card__title {
-  margin: 0 0 0.3rem;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.15;
 }
 
 .candidate-card__meta {
-  margin: 0;
+  margin: 0.18rem 0 0;
   color: var(--text-3);
+  font-size: 0.88rem;
+  line-height: 1.3;
+  word-break: break-word;
 }
 
-.candidate-card__body {
+.candidate-card .tag {
+  padding: 0.22rem 0.5rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+}
+
+.candidate-card__content {
   display: grid;
-  gap: var(--space-4);
+  gap: 0.7rem;
+  flex: 1;
+  margin-top: 0.55rem;
 }
 
-.candidate-card__stats {
+.candidate-card__latest {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: 0.15rem;
 }
 
-.candidate-stat {
-  padding: 0.9rem;
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.candidate-stat__label {
+.candidate-card__latest-label {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-3);
-  margin-bottom: 0.45rem;
 }
 
-.candidate-card__highlight {
-  display: grid;
-  gap: 0.3rem;
-  padding: 1rem;
-  border-radius: var(--radius-md);
-  background: linear-gradient(145deg, rgba(212, 175, 55, 0.12), rgba(255, 255, 255, 0.03));
-  border: 1px solid rgba(212, 175, 55, 0.18);
-}
-
-.candidate-card__highlight-label,
-.candidate-card__highlight-meta {
-  color: var(--text-3);
-  font-size: 0.82rem;
-}
-
-.candidate-card__timeline {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.candidate-card__timeline-item {
+.candidate-card__latest-line {
+  margin: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  align-items: baseline;
+  gap: 0.42rem;
+  min-width: 0;
+  color: var(--text-2);
+  line-height: 1.35;
+}
+
+.candidate-card__latest-line strong {
+  color: var(--text-1);
+  font-size: 0.95rem;
+  font-weight: 600;
+  min-width: 0;
+}
+
+.candidate-card__latest-line--empty strong {
   color: var(--text-2);
 }
 
-.candidate-card__timeline-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.candidate-card__latest-separator {
+  color: rgba(212, 175, 55, 0.8);
+  flex: 0 0 auto;
+}
+
+.candidate-card__latest-meta {
+  color: var(--text-3);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.candidate-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.85rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.candidate-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.32rem;
+  min-width: 0;
+}
+
+.candidate-stat__label {
+  display: inline;
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.candidate-stat__value {
+  display: inline;
+  color: var(--text-2);
+  font-size: 0.82rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.candidate-stat--phone {
+  min-width: 0;
+}
+
+.candidate-stat__value--phone {
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.candidate-card__roles {
+  display: grid;
+  gap: 0.38rem;
+  align-content: start;
+}
+
+.candidate-card__roles-label {
+  display: block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+}
+
+.candidate-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.34rem;
+}
+
+.role-chip {
+  padding: 0.24rem 0.5rem;
+  font-size: 0.66rem;
+  line-height: 1.15;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-2);
+  border: 0;
+  max-width: 100%;
+}
+
+.role-chip.more {
+  color: var(--gold);
+  background: rgba(212, 175, 55, 0.1);
 }
 
 .candidate-card__actions {
   display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin-top: var(--space-4);
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: auto;
+  padding-top: 0.8rem;
+}
+
+.candidate-card__actions .btn {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  padding: 0.55rem 0.75rem;
+  border-radius: 11px;
+  box-shadow: none;
 }
 
 .candidates-empty {
@@ -189,12 +292,20 @@
     flex-direction: column;
   }
 
-  .candidate-card__stats {
-    grid-template-columns: 1fr;
+  .candidate-card {
+    min-height: auto;
   }
 
-  .candidate-card__timeline-item {
+  .candidate-card__latest-line {
+    flex-wrap: wrap;
+  }
+
+  .candidate-card__latest-meta {
+    white-space: normal;
+  }
+
+  .candidate-card__actions {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 }
