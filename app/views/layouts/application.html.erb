@@ -18,8 +18,17 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <%= stylesheet_link_tag "intlTelInput-no-assets", "data-turbo-track": "reload" %>
+    <style>
+      :root {
+        --iti-path-flags-1x: url("<%= asset_path('flags.webp') %>");
+        --iti-path-flags-2x: url("<%= asset_path('flags@2x.webp') %>");
+      }
+    </style>
+
     <%# Includes app/assets/builds/application.css (from cssbundling-rails) %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "intlTelInputWithUtils.min", "data-turbo-track": "reload", defer: true %>
     <%= javascript_importmap_tags %>
   </head>
 
